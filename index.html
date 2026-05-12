@@ -4,50 +4,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Perfectionism Check-In</title>
+  <title>AMPERE Check-In Prototype</title>
 
   <style>
+
     body {
       font-family: Arial, sans-serif;
-      max-width: 760px;
+      max-width: 820px;
       margin: 40px auto;
       padding: 20px;
-      line-height: 1.6;
+      line-height: 1.7;
       color: #222;
       background-color: #fafafa;
     }
 
     h1 {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .intro {
       background: #f4f1ee;
-      padding: 20px;
-      border-radius: 14px;
-      margin-bottom: 28px;
+      padding: 22px;
+      border-radius: 16px;
+      margin-bottom: 30px;
     }
 
     .question {
       background: white;
-      margin-bottom: 22px;
-      padding: 18px;
-      border-radius: 14px;
       border: 1px solid #ddd;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 22px;
+    }
+
+    .question p {
+      margin-bottom: 12px;
     }
 
     label {
       display: block;
-      margin: 8px 0;
+      margin: 6px 0;
       cursor: pointer;
     }
 
     button {
-      padding: 14px 22px;
-      border: none;
-      border-radius: 10px;
       background: #222;
       color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 22px;
       font-size: 16px;
       cursor: pointer;
       margin-top: 10px;
@@ -59,41 +64,49 @@
 
     #result {
       margin-top: 34px;
-      padding: 24px;
-      border-radius: 16px;
       background: white;
       border: 1px solid #ddd;
+      border-radius: 16px;
+      padding: 24px;
     }
 
     .score-box {
-      margin: 18px 0;
-      padding: 16px;
-      border-radius: 12px;
       background: #f7f7f7;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 18px 0;
     }
 
     .disclaimer {
       font-size: 14px;
       color: #555;
-      margin-top: 22px;
+      margin-top: 24px;
     }
+
   </style>
 </head>
 
 <body>
 
-  <h1>Perfectionism Check-In</h1>
+  <h1>AMPERE Reflection Prototype</h1>
 
   <div class="intro">
+
     <p>
-      This short reflection tool is inspired by ongoing AMPERE scale research
-      examining adaptive and maladaptive perfectionism patterns in engineering students.
+      This exploratory reflection tool is inspired by the AMPERE framework
+      (Adaptive and Maladaptive Perfectionism in Engineering).
     </p>
 
     <p>
-      This prototype uses exploratory interpretation logic based on relative response
-      patterns rather than diagnostic or population-based classifications.
+      The prototype demonstrates how psychometric research can be translated
+      into an interactive browser-based experience for reflection and educational purposes.
     </p>
+
+    <p>
+      This tool uses exploratory interpretation logic based on relative response
+      tendencies rather than diagnostic or population-based classifications.
+    </p>
+
   </div>
 
   <form id="quiz"></form>
@@ -109,44 +122,76 @@
     const questions = [
 
       // Adaptive items
+
       {
-        text: "I set high standards for myself in academic or professional work.",
+        text: "In my engineering studies, striving to do my best keeps me motivated.",
         type: "adaptive"
       },
 
       {
-        text: "My goals motivate me to improve.",
+        text: "In my engineering studies, I am motivated to work diligently to meet my academic performance goals.",
         type: "adaptive"
       },
 
       {
-        text: "I feel proud when I make progress even if the outcome is not perfect.",
+        text: "In my engineering studies, I strive for excellence.",
         type: "adaptive"
       },
 
       {
-        text: "I can use feedback without seeing it as a personal failure.",
+        text: "In my engineering studies, my successes encourage me to set higher standards for my academic performance.",
+        type: "adaptive"
+      },
+
+      {
+        text: "In my engineering studies, I enjoy working to achieve greater levels of precision and accuracy.",
+        type: "adaptive"
+      },
+
+      {
+        text: "In my engineering studies, setting high standards for my academic performance makes me a better engineering student.",
         type: "adaptive"
       },
 
       // Maladaptive items
+
       {
-        text: "I worry that mistakes make me look incapable.",
+        text: "In my engineering studies, I often feel frustrated because I cannot meet my academic goals.",
         type: "maladaptive"
       },
 
       {
-        text: "I delay decisions because I am afraid of choosing wrong.",
+        text: "In my engineering studies, I often worry about not meeting my own expectations.",
         type: "maladaptive"
       },
 
       {
-        text: "I feel like my work is not good enough even after effort.",
+        text: "In my engineering studies, I am unsatisfied with my accomplishments.",
         type: "maladaptive"
       },
 
       {
-        text: "I am hard on myself when I do not meet my own expectations.",
+        text: "In my engineering studies, I usually have trouble deciding whether I have prepared enough.",
+        type: "maladaptive"
+      },
+
+      {
+        text: "In my engineering studies, no matter how well I do, I don't feel satisfied with my academic performance.",
+        type: "maladaptive"
+      },
+
+      {
+        text: "In my engineering studies, no matter how much I study, I feel underprepared.",
+        type: "maladaptive"
+      },
+
+      {
+        text: "In my engineering studies, my academic performance doesn't meet my own standards.",
+        type: "maladaptive"
+      },
+
+      {
+        text: "In my engineering studies, I feel ashamed if I perform less than perfectly.",
         type: "maladaptive"
       }
 
@@ -160,7 +205,9 @@
 
         <div class="question">
 
-          <p><strong>${index + 1}. ${q.text}</strong></p>
+          <p>
+            <strong>${index + 1}. ${q.text}</strong>
+          </p>
 
           <label>
             <input type="radio" name="q${index}" value="1">
@@ -200,14 +247,15 @@
       let adaptiveCount = 0;
       let maladaptiveCount = 0;
 
-      // Collect responses
       for (let i = 0; i < questions.length; i++) {
 
         const answer =
           document.querySelector(`input[name="q${i}"]:checked`);
 
         if (!answer) {
-          alert("Please answer all questions first.");
+
+          alert("Please answer all questions before continuing.");
+
           return;
         }
 
@@ -225,7 +273,6 @@
         }
       }
 
-      // Average scores
       const adaptiveScore =
         adaptiveTotal / adaptiveCount;
 
@@ -235,14 +282,15 @@
       let profileTitle = "";
       let interpretation = "";
 
-      // Relative pattern interpretation logic
+      // Relative response interpretation logic
+
       if (adaptiveScore > maladaptiveScore + 0.5) {
 
         profileTitle =
           "Stronger Adaptive Perfectionism Pattern";
 
         interpretation =
-          "Your responses suggest that your high standards may be more connected to growth, motivation, and achievement striving than to harsh self-evaluation.";
+          "Your responses suggest that your high standards may be more connected to motivation, growth, persistence, and achievement striving than to harsh self-evaluation.";
 
       }
 
@@ -252,7 +300,7 @@
           "Stronger Evaluative Concern Pattern";
 
         interpretation =
-          "Your responses suggest that perfectionistic tendencies may be more connected to worry, self-criticism, fear of mistakes, or decision avoidance.";
+          "Your responses suggest that perfectionistic tendencies may be more connected to worry, dissatisfaction, fear of mistakes, self-criticism, or feelings of underpreparation.";
 
       }
 
@@ -262,10 +310,9 @@
           "Mixed Perfectionism Pattern";
 
         interpretation =
-          "Your responses suggest a mixed pattern in which high standards and evaluative concerns may both be present.";
+          "Your responses suggest a mixed pattern in which both achievement striving and evaluative concerns may be present simultaneously.";
       }
 
-      // Display result
       document.getElementById("result").innerHTML = `
 
         <h2>${profileTitle}</h2>
@@ -287,10 +334,13 @@
         <p>${interpretation}</p>
 
         <p class="disclaimer">
-          This result is intended for reflection and educational purposes only.
+
+          This result is intended for educational and reflective purposes only.
+
           The prototype uses exploratory interpretation logic based on relative
           response tendencies and should not be interpreted as a diagnosis,
           clinical assessment, or validated population classification.
+
         </p>
 
       `;
