@@ -1,1 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfectionism Check-In</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 20px;
+      line-height: 1.6;
+      color: #222;
+      background-color: #fafafa;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .intro {
+      background: #f4f1ee;
+      padding: 20px;
+      border-radius: 14px;
+      margin-bottom: 28px;
+    }
+
+    .question {
+      background: white;
+      margin-bottom: 22px;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid #ddd;
+    }
+
+    label {
+      display: block;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+
+    button {
+      padding: 14px 22px;
+      border: none;
+      border-radius: 10px;
+      background: #222;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #444;
+    }
+
+    #result {
+      margin-top: 34px;
+      padding: 24px;
+      border-radius: 16px;
+      background: white;
+      border: 1px solid #ddd;
+    }
+
+    .score-box {
+      margin: 18px 0;
+      padding: 16px;
+      border-radius: 12px;
+      background: #f7f7f7;
+    }
+
+    .disclaimer {
+      font-size: 14px;
+      color: #555;
+      margin-top: 22px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Perfectionism Check-In</h1>
+
+  <div class="intro">
+    <p>
+      This short reflection tool is inspired by ongoing AMPERE scale research
+      examining adaptive and maladaptive perfectionism patterns in engineering students.
+    </p>
+
+    <p>
+      This prototype uses exploratory interpretation logic based on relative response
+      patterns rather than diagnostic or population-based classifications.
+    </p>
+  </div>
+
+  <form id="quiz"></form>
+
+  <button type="button" onclick="calculateScore()">
+    See My Results
+  </button>
+
+  <div id="result"></div>
+
+  <script>
+
+    const questions = [
+
+      // Adaptive items
+      {
+        text: "I set high standards for myself in academic or professional work.",
+        type: "adaptive"
+      },
+
+      {
+        text: "My goals motivate me to improve.",
+        type: "adaptive"
+      },
+
+      {
+        text: "I feel proud when I make progress even if the outcome is not perfect.",
+        type: "adaptive"
+      },
+
+      {
+        text: "I can use feedback without seeing it as a personal failure.",
+        type: "adaptive"
+      },
+
+      // Maladaptive items
+      {
+        text: "I worry that mistakes make me look incapable.",
+        type: "maladaptive"
+      },
+
+      {
+        text: "I delay decisions because I am afraid of choosing wrong.",
+        type: "maladaptive"
+      },
+
+      {
+        text: "I feel like my work is not good enough even after effort.",
+        type: "maladaptive"
+      },
+
+      {
+        text: "I am hard on myself when I do not meet my own expectations.",
+        type: "maladaptive"
+      }
+
+    ];
+
+    const quiz = document.getElementById("quiz");
+
+    questions.forEach((q, index) => {
+
+      quiz.innerHTML += `
+
+        <div class="question">
+
+          <p><strong>${index + 1}. ${q.text}</strong></p>
+
+          <label>
+            <input type="radio" name="q${index}" value="1">
+            Strongly disagree
+          </label>
+
+          <label>
+            <input type="radio" name="q${index}" value="2">
+            Disagree
+          </label>
+
+          <label>
+            <input type="radio" name="q${index}" value="3">
+            Neutral
+          </label>
+
+          <label>
+            <input type="radio" name="q${index}" value="4">
+            Agree
+          </label>
+
+          <label>
+            <input type="radio" name="q${index}" value="5">
+            Strongly agree
+          </label>
+
+        </div>
+
+      `;
+    });
+
+    function calculateScore() {
+
+      let adaptiveTotal = 0;
+      let maladaptiveTotal = 0;
+
+      let adaptiveCount = 0;
+      let maladaptiveCount = 0;
+
+      // Collect responses
+      for (let i = 0; i < questions.length; i++) {
+
+        const answer =
+          document.querySelector(`input[name="q${i}"]:checked`);
+
+        if (!answer) {
+          alert("Please answer all questions first.");
+          return;
+        }
+
+        const value = Number(answer.value);
+
+        if (questions[i].type === "adaptive") {
+
+          adaptiveTotal += value;
+          adaptiveCount++;
+
+        } else {
+
+          maladaptiveTotal += value;
+          maladaptiveCount++;
+        }
+      }
+
+      // Average scores
+      const adaptiveScore =
+        adaptiveTotal / adaptiveCount;
+
+      const maladaptiveScore =
+        maladaptiveTotal / maladaptiveCount;
+
+      let profileTitle = "";
+      let interpretation = "";
+
+      // Relative pattern interpretation logic
+      if (adaptiveScore > maladaptiveScore + 0.5) {
+
+        profileTitle =
+          "Stronger Adaptive Perfectionism Pattern";
+
+        interpretation =
+          "Your responses suggest that your high standards may be more connected to growth, motivation, and achievement striving than to harsh self-evaluation.";
+
+      }
+
+      else if (maladaptiveScore > adaptiveScore + 0.5) {
+
+        profileTitle =
+          "Stronger Evaluative Concern Pattern";
+
+        interpretation =
+          "Your responses suggest that perfectionistic tendencies may be more connected to worry, self-criticism, fear of mistakes, or decision avoidance.";
+
+      }
+
+      else {
+
+        profileTitle =
+          "Mixed Perfectionism Pattern";
+
+        interpretation =
+          "Your responses suggest a mixed pattern in which high standards and evaluative concerns may both be present.";
+      }
+
+      // Display result
+      document.getElementById("result").innerHTML = `
+
+        <h2>${profileTitle}</h2>
+
+        <div class="score-box">
+
+          <p>
+            <strong>Adaptive score:</strong>
+            ${adaptiveScore.toFixed(2)} / 5
+          </p>
+
+          <p>
+            <strong>Maladaptive score:</strong>
+            ${maladaptiveScore.toFixed(2)} / 5
+          </p>
+
+        </div>
+
+        <p>${interpretation}</p>
+
+        <p class="disclaimer">
+          This result is intended for reflection and educational purposes only.
+          The prototype uses exploratory interpretation logic based on relative
+          response tendencies and should not be interpreted as a diagnosis,
+          clinical assessment, or validated population classification.
+        </p>
+
+      `;
+    }
+
+  </script>
+
+</body>
+
+</html>
