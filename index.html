@@ -1,7 +1,6 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,7 +26,7 @@
       line-height: 1.3;
     }
 
-    h2 {
+    h2, h3 {
       line-height: 1.4;
     }
 
@@ -204,6 +203,45 @@
       margin-bottom: 12px;
     }
 
+    .resource-card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 18px 0;
+    }
+
+    .resource-card h4 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .resource-card.featured {
+      border: 2px solid #547e98;
+    }
+
+    .resource-note {
+      font-size: 14px;
+      color: #555;
+      margin-top: 16px;
+    }
+
+    .download-link {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 10px 15px;
+      background: #283f5b;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .download-link:hover {
+      background: #405f80;
+    }
+
     .disclaimer {
       font-size: 14px;
       color: #555;
@@ -225,8 +263,13 @@
 
       .intro,
       .question,
-      #result {
+      #result,
+      .reflection-box {
         padding: 18px;
+      }
+
+      .score-label {
+        flex-wrap: wrap;
       }
     }
   </style>
@@ -325,82 +368,67 @@
 
   <script>
 
-    // Original 14 items from the supplied prototype.
-    // Verify wording and response anchors against
-    // the final validated AMPERE instrument.
+    // AMPERE items from the original prototype.
+    // Confirm exact wording and response anchors
+    // against the finalized research instrument.
 
     const questions = [
-
       {
         text: "In my engineering studies, striving to do my best keeps me motivated.",
         type: "adaptive"
       },
-
       {
         text: "In my engineering studies, I am motivated to work diligently to meet my academic performance goals.",
         type: "adaptive"
       },
-
       {
         text: "In my engineering studies, I strive for excellence.",
         type: "adaptive"
       },
-
       {
         text: "In my engineering studies, my successes encourage me to set higher standards for my academic performance.",
         type: "adaptive"
       },
-
       {
         text: "In my engineering studies, I enjoy working to achieve greater levels of precision and accuracy.",
         type: "adaptive"
       },
-
       {
         text: "In my engineering studies, setting high standards for my academic performance makes me a better engineering student.",
         type: "adaptive"
       },
-
       {
         text: "In my engineering studies, I often feel frustrated because I cannot meet my academic goals.",
         type: "maladaptive"
       },
-
       {
         text: "In my engineering studies, I often worry about not meeting my own expectations.",
         type: "maladaptive"
       },
-
       {
         text: "In my engineering studies, I am unsatisfied with my accomplishments.",
         type: "maladaptive"
       },
-
       {
         text: "In my engineering studies, I usually have trouble deciding whether I have prepared enough.",
         type: "maladaptive"
       },
-
       {
         text: "In my engineering studies, no matter how well I do, I don't feel satisfied with my academic performance.",
         type: "maladaptive"
       },
-
       {
         text: "In my engineering studies, no matter how much I study, I feel underprepared.",
         type: "maladaptive"
       },
-
       {
         text: "In my engineering studies, my academic performance doesn't meet my own standards.",
         type: "maladaptive"
       },
-
       {
         text: "In my engineering studies, I feel ashamed if I perform less than perfectly.",
         type: "maladaptive"
       }
-
     ];
 
     const responseOptions = [
@@ -416,10 +444,9 @@
     const errorMessage =
       document.getElementById("error-message");
 
-    // Build the questionnaire.
+    // Build questionnaire.
 
     questions.forEach((question, index) => {
-
       const card = document.createElement("div");
       card.className = "question";
       card.id = `question-${index}`;
@@ -433,7 +460,6 @@
       fieldset.appendChild(legend);
 
       responseOptions.forEach(option => {
-
         const label = document.createElement("label");
         const input = document.createElement("input");
 
@@ -453,10 +479,9 @@
       quiz.appendChild(card);
     });
 
-    // Update progress when answers change.
+    // Track questionnaire progress.
 
     quiz.addEventListener("change", event => {
-
       if (event.target.type !== "radio") {
         return;
       }
@@ -470,7 +495,8 @@
 
       errorMessage.textContent = "";
 
-      // Hide outdated results if an answer changes.
+      // Prevent previously calculated results
+      // from remaining visible after an answer changes.
       result.hidden = true;
       result.innerHTML = "";
 
@@ -478,11 +504,9 @@
     });
 
     function updateProgress() {
-
       let answered = 0;
 
       questions.forEach((question, index) => {
-
         const selected = document.querySelector(
           `input[name="q${index}"]:checked`
         );
@@ -506,20 +530,16 @@
         .setAttribute("aria-valuenow", answered);
     }
 
-    // Calculate each dimension independently.
+    // Calculate adaptive and maladaptive means.
 
     function calculateScore() {
-
       let adaptiveTotal = 0;
       let maladaptiveTotal = 0;
-
       let adaptiveCount = 0;
       let maladaptiveCount = 0;
-
       let firstMissing = null;
 
       questions.forEach((question, index) => {
-
         const answer = document.querySelector(
           `input[name="q${index}"]:checked`
         );
@@ -529,7 +549,6 @@
         );
 
         if (!answer) {
-
           card.classList.add("missing");
 
           if (firstMissing === null) {
@@ -550,13 +569,9 @@
           maladaptiveTotal += value;
           maladaptiveCount++;
         }
-
       });
 
-      // Require all responses.
-
       if (firstMissing !== null) {
-
         result.hidden = true;
 
         errorMessage.textContent =
@@ -572,17 +587,12 @@
           block: "center"
         });
 
-        const firstInput =
-          missingCard.querySelector("input");
-
-        firstInput.focus({
+        missingCard.querySelector("input").focus({
           preventScroll: true
         });
 
         return;
       }
-
-      // Scores are means on the original 1-5 scale.
 
       const adaptiveScore =
         adaptiveTotal / adaptiveCount;
@@ -593,10 +603,9 @@
       showResults(adaptiveScore, maladaptiveScore);
     }
 
-    // Create visual score display.
+    // Display independent subscale scores.
 
     function scoreCard(title, score, type, description) {
-
       const percentage = (score / 5) * 100;
 
       return `
@@ -629,9 +638,159 @@
       `;
     }
 
-    // Present exploratory, non-classifying feedback.
+    // Resource cards.
+    // Both resources are available to every participant.
 
-    function showResults(adaptiveScore, maladaptiveScore) {
+    function getRecommendedResources(
+      adaptiveScore,
+      maladaptiveScore
+    ) {
+
+      const studyLog = `
+        <div class="resource-card">
+
+          <h4>Study Log</h4>
+
+          <p>
+            Explore how your study habits, learning
+            conditions, and accomplishments relate
+            to your academic goals.
+          </p>
+
+          <p>
+            For the next week, record when and where
+            you studied, what you worked on, and
+            one thing you learned or accomplished.
+          </p>
+
+          <p>
+            At the end of the week, review your
+            entries and consider which study
+            conditions supported your progress.
+          </p>
+
+          <a
+            class="download-link"
+            href="study-log.pdf"
+            download
+          >
+            Download Study Log (PDF)
+          </a>
+
+        </div>
+      `;
+
+      const criticCoach = `
+        <div class="resource-card">
+
+          <h4>Critic vs. Coach</h4>
+
+          <p>
+            If you notice that worry, self-criticism,
+            or dissatisfaction affects your academic
+            experience, consider practicing a more
+            supportive way of responding to yourself.
+          </p>
+
+          <p>
+            This exercise invites you to identify
+            a self-critical thought and reframe
+            it using a more constructive and
+            encouraging voice, without abandoning
+            your academic standards.
+          </p>
+
+          <a
+            class="download-link"
+            href="critic-vs-coach.pdf"
+            download
+          >
+            Download Critic vs. Coach (PDF)
+          </a>
+
+        </div>
+      `;
+
+      // Exploratory ordering rule.
+      // This is NOT a validated classification
+      // or intervention recommendation algorithm.
+
+      let resources = "";
+      let orderingExplanation = "";
+
+      if (maladaptiveScore > adaptiveScore) {
+
+        resources = criticCoach + studyLog;
+
+        orderingExplanation =
+          "The Critic vs. Coach worksheet appears first " +
+          "because your maladaptive subscale mean " +
+          "was numerically higher than your adaptive mean.";
+
+      } else if (adaptiveScore > maladaptiveScore) {
+
+        resources = studyLog + criticCoach;
+
+        orderingExplanation =
+          "The Study Log appears first because your " +
+          "adaptive subscale mean was numerically " +
+          "higher than your maladaptive mean.";
+
+      } else {
+
+        resources = studyLog + criticCoach;
+
+        orderingExplanation =
+          "Your two subscale means were equal, " +
+          "so neither worksheet is prioritized.";
+
+      }
+
+      return `
+        <div class="reflection-box">
+
+          <h3>Explore Your Reflection Resources</h3>
+
+          <p>
+            These worksheets offer two different
+            opportunities for reflecting on your
+            academic experiences.
+          </p>
+
+          <p>
+            <strong>Why this order?</strong>
+            ${orderingExplanation}
+          </p>
+
+          <p>
+            Both resources are available regardless
+            of your scores. Choose whichever
+            activity feels most useful to you.
+          </p>
+
+          ${resources}
+
+          <p class="resource-note">
+            <strong>About these suggestions:</strong>
+            Worksheet ordering uses a simple comparison
+            of the two subscale means. This rule is
+            exploratory and has not been validated
+            as a method for identifying individual
+            support needs. A higher mean does not
+            establish which activity will be
+            most beneficial.
+          </p>
+
+        </div>
+      `;
+    }
+
+    // Present exploratory results and resources.
+
+    function showResults(
+      adaptiveScore,
+      maladaptiveScore
+    ) {
 
       const adaptiveDescription =
         "This score summarizes your responses to " +
@@ -643,15 +802,21 @@
         "items about evaluative concerns, dissatisfaction, " +
         "self-criticism, and feeling underprepared.";
 
+      const recommendedResources =
+        getRecommendedResources(
+          adaptiveScore,
+          maladaptiveScore
+        );
+
       result.innerHTML = `
 
         <h2>Your AMPERE Reflection</h2>
 
         <p>
           Your responses are summarized across two
-          dimensions of perfectionism. Each score is
-          the average of the corresponding item responses,
-          ranging from 1 to 5.
+          dimensions of perfectionism. Each score
+          is the average of the corresponding
+          item responses, ranging from 1 to 5.
         </p>
 
         <p>
@@ -688,8 +853,8 @@
           </p>
 
           <p>
-            Rather than comparing your two scores
-            to determine a single perfectionism
+            Rather than using your scores to
+            determine a single perfectionism
             profile, consider how the experiences
             represented by each dimension appear
             in your academic life.
@@ -716,28 +881,9 @@
             </li>
           </ul>
 
-          <h3>One Small Practice to Try</h3>
-
-          <p>
-            For the next week, keep a short study log.
-            Record when and where you studied,
-            what you worked on, and one thing
-            you learned or accomplished.
-          </p>
-
-          <p>
-            At the end of the week, review your
-            entries and consider which study
-            conditions supported your progress.
-          </p>
-
-          <p>
-            <a href="study-log.pdf" download>
-              Download the Study Log (PDF)
-            </a>
-          </p>
-
         </div>
+
+        ${recommendedResources}
 
         <p class="disclaimer">
 
@@ -751,9 +897,11 @@
           is an exploratory application of that work
           and has not been separately validated.
 
-          Results should not be interpreted as a
-          diagnosis, clinical assessment, or
-          validated population classification.
+          Results and worksheet suggestions should
+          not be interpreted as a diagnosis,
+          clinical assessment, validated population
+          classification, or evidence of which
+          intervention an individual needs.
 
         </p>
 
@@ -771,10 +919,9 @@
       });
     }
 
-    // Reset questionnaire.
+    // Reset the questionnaire.
 
     function resetQuiz() {
-
       quiz.reset();
 
       document.querySelectorAll(".question")
