@@ -1,9 +1,11 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>AMPERE Interactive Reflection</title>
 
   <style>
@@ -203,6 +205,18 @@
       margin-bottom: 12px;
     }
 
+    .mixed-box {
+      background: #eef4f3;
+      border: 1px solid #b9d4ce;
+      border-radius: 14px;
+      padding: 22px;
+      margin-top: 25px;
+    }
+
+    .mixed-box h3 {
+      margin-top: 0;
+    }
+
     .resource-card {
       background: white;
       border: 1px solid #ddd;
@@ -264,7 +278,8 @@
       .intro,
       .question,
       #result,
-      .reflection-box {
+      .reflection-box,
+      .mixed-box {
         padding: 18px;
       }
 
@@ -315,6 +330,14 @@
       as an individual interpretation system.
     </p>
 
+    <p>
+      Some reflection content is informed by
+      thresholds derived from the original
+      dissertation research sample. These
+      thresholds have not been validated as
+      cutoffs for classifying individuals.
+    </p>
+
     <p class="privacy-note">
       <strong>Privacy:</strong>
       This standalone version processes your
@@ -326,6 +349,7 @@
   </div>
 
   <div class="progress-container">
+
     <div id="progress-text" aria-live="polite">
       0 of 14 questions answered
     </div>
@@ -341,6 +365,7 @@
     >
       <div id="progress-bar"></div>
     </div>
+
   </div>
 
   <form id="quiz" novalidate></form>
@@ -368,9 +393,9 @@
 
   <script>
 
-    // AMPERE items from the original prototype.
-    // Confirm exact wording and response anchors
-    // against the finalized research instrument.
+    // AMPERE items from the supplied prototype.
+    // Verify wording and response anchors against
+    // the finalized research instrument.
 
     const questions = [
       {
@@ -439,14 +464,23 @@
       { value: 5, label: "Strongly agree" }
     ];
 
+    // Dissertation-derived research thresholds.
+    // These are sample-specific grouping values,
+    // NOT validated individual classification cutoffs.
+
+    const MIXED_ADAPTIVE_THRESHOLD = 4.25;
+    const MIXED_MALADAPTIVE_THRESHOLD = 3.36;
+
     const quiz = document.getElementById("quiz");
     const result = document.getElementById("result");
+
     const errorMessage =
       document.getElementById("error-message");
 
-    // Build questionnaire.
+    // Build the questionnaire.
 
     questions.forEach((question, index) => {
+
       const card = document.createElement("div");
       card.className = "question";
       card.id = `question-${index}`;
@@ -460,6 +494,7 @@
       fieldset.appendChild(legend);
 
       responseOptions.forEach(option => {
+
         const label = document.createElement("label");
         const input = document.createElement("input");
 
@@ -468,6 +503,7 @@
         input.value = String(option.value);
 
         label.appendChild(input);
+
         label.appendChild(
           document.createTextNode(option.label)
         );
@@ -479,9 +515,10 @@
       quiz.appendChild(card);
     });
 
-    // Track questionnaire progress.
+    // Update progress when responses change.
 
     quiz.addEventListener("change", event => {
+
       if (event.target.type !== "radio") {
         return;
       }
@@ -495,8 +532,8 @@
 
       errorMessage.textContent = "";
 
-      // Prevent previously calculated results
-      // from remaining visible after an answer changes.
+      // Hide outdated results after an answer changes.
+
       result.hidden = true;
       result.innerHTML = "";
 
@@ -504,9 +541,11 @@
     });
 
     function updateProgress() {
+
       let answered = 0;
 
       questions.forEach((question, index) => {
+
         const selected = document.querySelector(
           `input[name="q${index}"]:checked`
         );
@@ -530,16 +569,20 @@
         .setAttribute("aria-valuenow", answered);
     }
 
-    // Calculate adaptive and maladaptive means.
+    // Calculate the two subscale means independently.
 
     function calculateScore() {
+
       let adaptiveTotal = 0;
       let maladaptiveTotal = 0;
+
       let adaptiveCount = 0;
       let maladaptiveCount = 0;
+
       let firstMissing = null;
 
       questions.forEach((question, index) => {
+
         const answer = document.querySelector(
           `input[name="q${index}"]:checked`
         );
@@ -549,6 +592,7 @@
         );
 
         if (!answer) {
+
           card.classList.add("missing");
 
           if (firstMissing === null) {
@@ -571,7 +615,10 @@
         }
       });
 
+      // Require responses to all 14 items.
+
       if (firstMissing !== null) {
+
         result.hidden = true;
 
         errorMessage.textContent =
@@ -603,10 +650,12 @@
       showResults(adaptiveScore, maladaptiveScore);
     }
 
-    // Display independent subscale scores.
+    // Create visual score cards.
 
     function scoreCard(title, score, type, description) {
-      const percentage = (score / 5) * 100;
+
+      // The scale starts at 1, not 0.
+      const percentage = ((score - 1) / 4) * 100;
 
       return `
         <div class="score-box">
@@ -638,65 +687,167 @@
       `;
     }
 
-    // Resource cards.
-    // Both resources are available to every participant.
+    // Determine whether both dissertation-derived
+    // research thresholds are met.
+    //
+    // This is an exploratory co-endorsement rule,
+    // not a validated individual classification.
 
-    function getRecommendedResources(
+    function meetsMixedReflectionRule(
       adaptiveScore,
       maladaptiveScore
     ) {
 
-      const studyLog = `
-        <div class="resource-card">
+      return (
+        adaptiveScore >= MIXED_ADAPTIVE_THRESHOLD &&
+        maladaptiveScore >= MIXED_MALADAPTIVE_THRESHOLD
+      );
+    }
 
-          <h4>Study Log</h4>
+    // Mixed co-endorsement reflection.
+
+    function getMixedReflection() {
+
+      return `
+        <div class="mixed-box">
+
+          <h3>
+            When High Standards Both Motivate
+            and Pressure You
+          </h3>
 
           <p>
-            Explore how your study habits, learning
-            conditions, and accomplishments relate
-            to your academic goals.
+            Your responses meet the exploratory
+            co-endorsement criteria derived from
+            the original AMPERE dissertation sample.
           </p>
 
           <p>
-            For the next week, record when and where
-            you studied, what you worked on, and
-            one thing you learned or accomplished.
+            This means that achievement striving
+            and evaluative concerns may both be
+            relevant to your academic experiences.
+            You might feel motivated to pursue
+            ambitious goals while also experiencing
+            worry, self-criticism, or dissatisfaction.
           </p>
 
           <p>
-            At the end of the week, review your
-            entries and consider which study
-            conditions supported your progress.
+            These experiences are not necessarily
+            contradictory. High standards may
+            support motivation in some situations
+            while creating additional pressure
+            in others.
           </p>
 
-          <a
-            class="download-link"
-            href="study-log.pdf"
-            download
-          >
-            Download Study Log (PDF)
-          </a>
+          <h3>
+            Reflection: Two Sides of the Same Standard
+          </h3>
+
+          <ol>
+            <li>
+              What academic standard motivates
+              you to work toward your goals?
+            </li>
+
+            <li>
+              When might that same standard
+              create unnecessary pressure,
+              worry, or self-criticism?
+            </li>
+
+            <li>
+              How could you maintain your
+              commitment to excellence while
+              responding more constructively
+              to mistakes or setbacks?
+            </li>
+          </ol>
+
+          <p class="resource-note">
+            <strong>Research interpretation:</strong>
+            The thresholds used for this reflection
+            are adaptive mean &ge; 4.25 and
+            maladaptive mean &ge; 3.36.
+            They were derived from the original
+            dissertation research sample.
+            They have not been validated as
+            individual classification cutoffs
+            and do not establish that a
+            participant belongs to a fixed
+            psychological category.
+          </p>
 
         </div>
       `;
+    }
 
-      const criticCoach = `
-        <div class="resource-card">
+    // Build optional educational resource cards.
+
+    function resourceCard(type, featured = false) {
+
+      const featuredClass =
+        featured ? " featured" : "";
+
+      if (type === "study") {
+
+        return `
+          <div class="resource-card${featuredClass}">
+
+            <h4>Study Log</h4>
+
+            <p>
+              Explore how your study habits,
+              learning conditions, and
+              accomplishments relate to
+              your academic goals.
+            </p>
+
+            <p>
+              For the next week, record when
+              and where you studied, what
+              you worked on, and one thing
+              you learned or accomplished.
+            </p>
+
+            <p>
+              At the end of the week,
+              review your entries and
+              consider which conditions
+              supported your progress.
+            </p>
+
+            <a
+              class="download-link"
+              href="study-log.pdf"
+              download
+            >
+              Download Study Log (PDF)
+            </a>
+
+          </div>
+        `;
+      }
+
+      return `
+        <div class="resource-card${featuredClass}">
 
           <h4>Critic vs. Coach</h4>
 
           <p>
-            If you notice that worry, self-criticism,
-            or dissatisfaction affects your academic
-            experience, consider practicing a more
-            supportive way of responding to yourself.
+            If you notice that worry,
+            self-criticism, or dissatisfaction
+            affects your academic experience,
+            consider practicing a more
+            supportive way of responding
+            to yourself.
           </p>
 
           <p>
-            This exercise invites you to identify
-            a self-critical thought and reframe
-            it using a more constructive and
-            encouraging voice, without abandoning
+            This exercise invites you to
+            identify a self-critical thought
+            and reframe it using a more
+            constructive and encouraging
+            voice, without abandoning
             your academic standards.
           </p>
 
@@ -710,40 +861,73 @@
 
         </div>
       `;
+    }
 
-      // Exploratory ordering rule.
-      // This is NOT a validated classification
-      // or intervention recommendation algorithm.
+    // Personalize resource presentation.
+    //
+    // Mixed co-endorsement takes priority.
+    // Otherwise, order the two worksheets
+    // using the relative subscale means.
+    //
+    // Neither rule has been validated as
+    // an intervention recommendation algorithm.
+
+    function getRecommendedResources(
+      adaptiveScore,
+      maladaptiveScore
+    ) {
+
+      const isMixed = meetsMixedReflectionRule(
+        adaptiveScore,
+        maladaptiveScore
+      );
 
       let resources = "";
-      let orderingExplanation = "";
+      let explanation = "";
 
-      if (maladaptiveScore > adaptiveScore) {
+      if (isMixed) {
 
-        resources = criticCoach + studyLog;
+        resources =
+          resourceCard("study") +
+          resourceCard("critic");
 
-        orderingExplanation =
-          "The Critic vs. Coach worksheet appears first " +
-          "because your maladaptive subscale mean " +
-          "was numerically higher than your adaptive mean.";
+        explanation =
+          "Both worksheets are presented with equal " +
+          "prominence because your responses meet " +
+          "the dissertation-derived exploratory " +
+          "co-endorsement criteria.";
+
+      } else if (maladaptiveScore > adaptiveScore) {
+
+        resources =
+          resourceCard("critic", true) +
+          resourceCard("study");
+
+        explanation =
+          "Critic vs. Coach appears first because " +
+          "your maladaptive subscale mean was " +
+          "numerically higher than your adaptive mean.";
 
       } else if (adaptiveScore > maladaptiveScore) {
 
-        resources = studyLog + criticCoach;
+        resources =
+          resourceCard("study", true) +
+          resourceCard("critic");
 
-        orderingExplanation =
-          "The Study Log appears first because your " +
+        explanation =
+          "Study Log appears first because your " +
           "adaptive subscale mean was numerically " +
           "higher than your maladaptive mean.";
 
       } else {
 
-        resources = studyLog + criticCoach;
+        resources =
+          resourceCard("study") +
+          resourceCard("critic");
 
-        orderingExplanation =
+        explanation =
           "Your two subscale means were equal, " +
           "so neither worksheet is prioritized.";
-
       }
 
       return `
@@ -753,39 +937,38 @@
 
           <p>
             These worksheets offer two different
-            opportunities for reflecting on your
+            opportunities to reflect on your
             academic experiences.
           </p>
 
           <p>
-            <strong>Why this order?</strong>
-            ${orderingExplanation}
+            <strong>Why these suggestions?</strong>
+            ${explanation}
           </p>
 
           <p>
-            Both resources are available regardless
-            of your scores. Choose whichever
-            activity feels most useful to you.
+            Both resources are available
+            regardless of your scores.
+            You may choose either or both.
           </p>
 
           ${resources}
 
           <p class="resource-note">
             <strong>About these suggestions:</strong>
-            Worksheet ordering uses a simple comparison
-            of the two subscale means. This rule is
-            exploratory and has not been validated
-            as a method for identifying individual
-            support needs. A higher mean does not
-            establish which activity will be
-            most beneficial.
+            Worksheet presentation is based on
+            exploratory scoring rules.
+            These rules have not been validated
+            for determining which educational
+            activity is most beneficial
+            for an individual.
           </p>
 
         </div>
       `;
     }
 
-    // Present exploratory results and resources.
+    // Display the complete results experience.
 
     function showResults(
       adaptiveScore,
@@ -802,6 +985,14 @@
         "items about evaluative concerns, dissatisfaction, " +
         "self-criticism, and feeling underprepared.";
 
+      const isMixed = meetsMixedReflectionRule(
+        adaptiveScore,
+        maladaptiveScore
+      );
+
+      const mixedReflection =
+        isMixed ? getMixedReflection() : "";
+
       const recommendedResources =
         getRecommendedResources(
           adaptiveScore,
@@ -813,17 +1004,19 @@
         <h2>Your AMPERE Reflection</h2>
 
         <p>
-          Your responses are summarized across two
-          dimensions of perfectionism. Each score
-          is the average of the corresponding
-          item responses, ranging from 1 to 5.
+          Your responses are summarized
+          across two dimensions of perfectionism.
+          Each score is the average of the
+          corresponding item responses,
+          ranging from 1 to 5.
         </p>
 
         <p>
-          Higher scores indicate greater agreement
-          with statements within that dimension.
-          The scores are not diagnostic ratings,
-          percentile ranks, or validated individual
+          Higher scores indicate greater
+          agreement with statements within
+          that dimension. The scores are
+          not diagnostic ratings, percentile
+          ranks, or validated individual
           classifications.
         </p>
 
@@ -848,16 +1041,16 @@
           <p>
             Adaptive and maladaptive perfectionism
             are distinct dimensions. It is possible
-            to endorse statements associated with
-            both dimensions.
+            to endorse statements associated
+            with both dimensions.
           </p>
 
           <p>
-            Rather than using your scores to
-            determine a single perfectionism
+            Rather than using your scores
+            to determine a fixed perfectionism
             profile, consider how the experiences
-            represented by each dimension appear
-            in your academic life.
+            represented by each dimension
+            appear in your academic life.
           </p>
 
           <h3>Questions to Consider</h3>
@@ -869,8 +1062,8 @@
             </li>
 
             <li>
-              Are there situations in which your
-              expectations lead to worry,
+              Are there situations in which
+              your expectations lead to worry,
               dissatisfaction, or self-criticism?
             </li>
 
@@ -883,25 +1076,37 @@
 
         </div>
 
+        ${mixedReflection}
+
         ${recommendedResources}
 
         <p class="disclaimer">
 
           <strong>Important:</strong>
-          This reflection tool is intended for
-          educational and exploratory purposes only.
+          This reflection tool is intended
+          for educational and exploratory
+          purposes only.
 
-          AMPERE was developed through psychometric
-          research with engineering undergraduates.
-          The individualized feedback presented here
-          is an exploratory application of that work
-          and has not been separately validated.
+          AMPERE was developed through
+          psychometric research with
+          engineering undergraduates.
 
-          Results and worksheet suggestions should
-          not be interpreted as a diagnosis,
-          clinical assessment, validated population
-          classification, or evidence of which
-          intervention an individual needs.
+          The individualized feedback
+          presented here is an exploratory
+          application of that work and
+          has not been separately validated.
+
+          The dissertation-derived thresholds
+          used for the mixed reflection
+          are sample-specific research values,
+          not validated individual cutoffs.
+
+          Results and resource suggestions
+          should not be interpreted as
+          a diagnosis, clinical assessment,
+          validated population classification,
+          or evidence of which intervention
+          an individual needs.
 
         </p>
 
@@ -922,6 +1127,7 @@
     // Reset the questionnaire.
 
     function resetQuiz() {
+
       quiz.reset();
 
       document.querySelectorAll(".question")
