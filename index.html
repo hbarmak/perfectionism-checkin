@@ -283,7 +283,6 @@
       let interpretation = "";
       let whatHelps = "";
 
-
       // Relative response interpretation logic
 
       if (adaptiveScore > maladaptiveScore + 0.5) {
@@ -293,6 +292,13 @@
 
         interpretation =
           "Your responses suggest that your high standards may be more connected to motivation, growth, persistence, and achievement striving than to harsh self-evaluation.";
+
+        whatHelps = `
+        <div class="score-box">
+          <p><strong>What this pattern can mean:</strong> Your answers show a tendency toward high standards — and a belief that you're capable of reaching them. That's a promising combination: your standards push you forward, and your confidence lets you act on them.</p>
+          <p><strong>What helps next:</strong> keep a short study log — one row per session (when, how long, where, with whom, and one success). After a couple of weeks you'll have evidence about what actually works for you.</p>
+          <p><a href="study-log.pdf" download>Download the study log (PDF)</a> — print it, or save it and fill it in each week.</p>
+        </div>`;
 
       }
 
@@ -304,15 +310,14 @@
         interpretation =
           "Your responses suggest that perfectionistic tendencies may be more connected to worry, dissatisfaction, fear of mistakes, self-criticism, or feelings of underpreparation.";
 
+        whatHelps = `
+        <div class="score-box">
+          <p><strong>What this pattern can mean:</strong> Your responses suggest that while you have high standards to achieve your academic goals, other things — self-criticism, worry about mistakes, or never feeling satisfied — might be getting in the way of your success journey. Your standards push you forward, and they can still carry you there — the work isn't lowering the bar, it's loosening the critic's grip so you can actually use what you're capable of.</p>
+          <p><strong>One small practice to try this week:</strong> Pick one harsh thought from this week, write it down, then rewrite it the way a supportive coach would say it — same standard, kinder voice.</p>
+          <p><a href="study-log.pdf" download>Download the study log (PDF)</a> — after the rewrite, use it to track one success per session.</p>
+        </div>`;
+
       }
-whatHelps = `
-<div class="score-box">
-  <p><strong>What this pattern can mean:</strong> Your responses suggest that while you have high standards to achieve your academic goals, other things — self-criticism, worry about mistakes, or never feeling satisfied — might be getting in the way of your success journey. Your standards push you forward, and they can still carry you there — the work isn't lowering the bar, it's loosening the critic's grip so you can actually use what you're capable of.</p>
-  <p><strong>One small practice to try this week:</strong> Pick one harsh thought from this week, write it down, then rewrite it the way a supportive coach would say it — same standard, kinder voice.</p>
-  <p><a href="study-log.pdf" download>Download the study log (PDF)</a> — after the rewrite, use it to track one success per session.</p>
-</div>`;
-    
-    }
 
       else {
 
@@ -321,6 +326,12 @@ whatHelps = `
 
         interpretation =
           "Your responses suggest a mixed pattern in which both achievement striving and evaluative concerns may be present simultaneously.";
+
+        whatHelps = `
+        <div class="score-box">
+          <p><strong>What helps next:</strong> keep a short study log — one row per session (when, how long, where, with whom, and one success). After a couple of weeks you'll have evidence about what actually works for you.</p>
+          <p><a href="study-log.pdf" download>Download the study log (PDF)</a> — print it, or save it and fill it in each week.</p>
+        </div>`;
       }
 
       document.getElementById("result").innerHTML = `
@@ -343,8 +354,7 @@ whatHelps = `
 
         <p>${interpretation}</p>
 
-${whatHelps}
-
+        ${whatHelps}
 
         <p class="disclaimer">
 
