@@ -1,12 +1,16 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AMPERE Check-In Prototype</title>
+  <title>AMPERE Interactive Reflection</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       font-family: Arial, sans-serif;
@@ -15,16 +19,21 @@
       padding: 20px;
       line-height: 1.7;
       color: #222;
-      background-color: #fafafa;
+      background: #fafafa;
     }
 
     h1 {
       margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    h2 {
+      line-height: 1.4;
     }
 
     .intro {
       background: #f4f1ee;
-      padding: 22px;
+      padding: 24px;
       border-radius: 16px;
       margin-bottom: 30px;
     }
@@ -33,18 +42,37 @@
       background: white;
       border: 1px solid #ddd;
       border-radius: 14px;
-      padding: 18px;
+      padding: 20px;
       margin-bottom: 22px;
     }
 
-    .question p {
-      margin-bottom: 12px;
+    .question.missing {
+      border: 2px solid #b94a48;
+      background: #fff8f7;
+    }
+
+    fieldset {
+      border: 0;
+      padding: 0;
+      margin: 0;
+      min-width: 0;
+    }
+
+    legend {
+      font-weight: bold;
+      margin-bottom: 14px;
+      width: 100%;
     }
 
     label {
       display: block;
-      margin: 6px 0;
+      padding: 5px 0;
       cursor: pointer;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+      accent-color: #283f5b;
     }
 
     button {
@@ -55,11 +83,57 @@
       padding: 14px 22px;
       font-size: 16px;
       cursor: pointer;
-      margin-top: 10px;
+      margin: 10px 10px 10px 0;
     }
 
     button:hover {
       background: #444;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible {
+      outline: 3px solid #3977b8;
+      outline-offset: 3px;
+    }
+
+    .secondary-button {
+      background: #eee;
+      color: #222;
+      border: 1px solid #ccc;
+    }
+
+    .secondary-button:hover {
+      background: #ddd;
+    }
+
+    .progress-container {
+      margin: 25px 0 30px;
+    }
+
+    .progress-track {
+      height: 12px;
+      background: #e3e3e3;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #486c88;
+      transition: width 0.25s ease;
+    }
+
+    #progress-text {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    #error-message {
+      color: #a32929;
+      font-weight: bold;
+      margin: 12px 0;
     }
 
     #result {
@@ -70,58 +144,192 @@
       padding: 24px;
     }
 
+    #result[hidden] {
+      display: none;
+    }
+
     .score-box {
       background: #f7f7f7;
       border-radius: 12px;
-      padding: 16px;
+      padding: 20px;
       margin: 18px 0;
+    }
+
+    .score-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .score-track {
+      height: 18px;
+      background: #e1e1e1;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .score-fill {
+      height: 100%;
+      border-radius: 20px;
+    }
+
+    .adaptive-fill {
+      background: #547e98;
+    }
+
+    .maladaptive-fill {
+      background: #c48a63;
+    }
+
+    .score-description {
+      font-size: 14px;
+      color: #555;
+      margin-top: 10px;
+    }
+
+    .reflection-box {
+      background: #f4f1ee;
+      padding: 22px;
+      border-radius: 14px;
+      margin-top: 25px;
+    }
+
+    .reflection-box ul {
+      padding-left: 22px;
+    }
+
+    .reflection-box li {
+      margin-bottom: 12px;
     }
 
     .disclaimer {
       font-size: 14px;
       color: #555;
       margin-top: 24px;
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
     }
 
+    .privacy-note {
+      font-size: 14px;
+      color: #555;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        margin: 10px auto;
+        padding: 15px;
+      }
+
+      .intro,
+      .question,
+      #result {
+        padding: 18px;
+      }
+    }
   </style>
 </head>
 
 <body>
 
-  <h1>Adaptive and Maladaptive Perfectionism in Engineering (AMPERE)</h1>
+  <h1>
+    Adaptive and Maladaptive Perfectionism
+    in Engineering (AMPERE)
+  </h1>
 
   <div class="intro">
 
     <p>
-    This exploratory reflection tool translates the AMPERE framework
-(Adaptive and Maladaptive Perfectionism in Engineering) into an interactive browser-based experience inspired by doctoral research conducted by Dr. Haleh Brotherton.
+      This exploratory reflection tool translates the
+      AMPERE framework (Adaptive and Maladaptive
+      Perfectionism in Engineering) into an interactive
+      browser-based experience inspired by doctoral
+      research conducted by Dr. Haleh Brotherton.
     </p>
 
     <p>
-      The prototype demonstrates how psychometric research can be translated
-      into an interactive browser-based experience for reflection and educational purposes.
+      AMPERE examines two dimensions of perfectionism:
+      adaptive perfectionism, associated with achievement
+      striving and high academic standards, and
+      maladaptive perfectionism, associated with
+      evaluative concerns and self-criticism.
     </p>
 
     <p>
-      This tool uses exploratory interpretation logic based on relative response
-      tendencies rather than diagnostic or population-based classifications.
+      These dimensions can coexist. Your responses
+      will be summarized separately to support
+      personal reflection rather than to assign
+      you to a fixed perfectionism category.
+    </p>
+
+    <p>
+      The instrument was developed in the context
+      of engineering undergraduate education.
+      The feedback provided here is exploratory
+      and has not been independently validated
+      as an individual interpretation system.
+    </p>
+
+    <p class="privacy-note">
+      <strong>Privacy:</strong>
+      This standalone version processes your
+      responses locally in your browser.
+      It does not send or save your answers
+      to a server.
     </p>
 
   </div>
 
-  <form id="quiz"></form>
+  <div class="progress-container">
+    <div id="progress-text" aria-live="polite">
+      0 of 14 questions answered
+    </div>
 
-  <button type="button" onclick="calculateScore()">
+    <div
+      class="progress-track"
+      id="progress-track"
+      role="progressbar"
+      aria-label="Questionnaire completion"
+      aria-valuemin="0"
+      aria-valuemax="14"
+      aria-valuenow="0"
+    >
+      <div id="progress-bar"></div>
+    </div>
+  </div>
+
+  <form id="quiz" novalidate></form>
+
+  <p id="error-message" role="alert"></p>
+
+  <button type="button" id="results-button">
     See My Results
   </button>
 
-  <div id="result"></div>
+  <button
+    type="button"
+    id="reset-button"
+    class="secondary-button"
+  >
+    Start Over
+  </button>
+
+  <section
+    id="result"
+    aria-label="AMPERE reflection results"
+    tabindex="-1"
+    hidden
+  ></section>
 
   <script>
 
-    const questions = [
+    // Original 14 items from the supplied prototype.
+    // Verify wording and response anchors against
+    // the final validated AMPERE instrument.
 
-      // Adaptive items
+    const questions = [
 
       {
         text: "In my engineering studies, striving to do my best keeps me motivated.",
@@ -152,8 +360,6 @@
         text: "In my engineering studies, setting high standards for my academic performance makes me a better engineering student.",
         type: "adaptive"
       },
-
-      // Maladaptive items
 
       {
         text: "In my engineering studies, I often feel frustrated because I cannot meet my academic goals.",
@@ -197,47 +403,110 @@
 
     ];
 
+    const responseOptions = [
+      { value: 1, label: "Strongly disagree" },
+      { value: 2, label: "Disagree" },
+      { value: 3, label: "Neutral" },
+      { value: 4, label: "Agree" },
+      { value: 5, label: "Strongly agree" }
+    ];
+
     const quiz = document.getElementById("quiz");
+    const result = document.getElementById("result");
+    const errorMessage =
+      document.getElementById("error-message");
 
-    questions.forEach((q, index) => {
+    // Build the questionnaire.
 
-      quiz.innerHTML += `
+    questions.forEach((question, index) => {
 
-        <div class="question">
+      const card = document.createElement("div");
+      card.className = "question";
+      card.id = `question-${index}`;
 
-          <p>
-            <strong>${index + 1}. ${q.text}</strong>
-          </p>
+      const fieldset = document.createElement("fieldset");
+      const legend = document.createElement("legend");
 
-          <label>
-            <input type="radio" name="q${index}" value="1">
-            Strongly disagree
-          </label>
+      legend.textContent =
+        `${index + 1}. ${question.text}`;
 
-          <label>
-            <input type="radio" name="q${index}" value="2">
-            Disagree
-          </label>
+      fieldset.appendChild(legend);
 
-          <label>
-            <input type="radio" name="q${index}" value="3">
-            Neutral
-          </label>
+      responseOptions.forEach(option => {
 
-          <label>
-            <input type="radio" name="q${index}" value="4">
-            Agree
-          </label>
+        const label = document.createElement("label");
+        const input = document.createElement("input");
 
-          <label>
-            <input type="radio" name="q${index}" value="5">
-            Strongly agree
-          </label>
+        input.type = "radio";
+        input.name = `q${index}`;
+        input.value = String(option.value);
 
-        </div>
+        label.appendChild(input);
+        label.appendChild(
+          document.createTextNode(option.label)
+        );
 
-      `;
+        fieldset.appendChild(label);
+      });
+
+      card.appendChild(fieldset);
+      quiz.appendChild(card);
     });
+
+    // Update progress when answers change.
+
+    quiz.addEventListener("change", event => {
+
+      if (event.target.type !== "radio") {
+        return;
+      }
+
+      const questionCard =
+        event.target.closest(".question");
+
+      if (questionCard) {
+        questionCard.classList.remove("missing");
+      }
+
+      errorMessage.textContent = "";
+
+      // Hide outdated results if an answer changes.
+      result.hidden = true;
+      result.innerHTML = "";
+
+      updateProgress();
+    });
+
+    function updateProgress() {
+
+      let answered = 0;
+
+      questions.forEach((question, index) => {
+
+        const selected = document.querySelector(
+          `input[name="q${index}"]:checked`
+        );
+
+        if (selected) {
+          answered++;
+        }
+      });
+
+      const percentage =
+        (answered / questions.length) * 100;
+
+      document.getElementById("progress-text")
+        .textContent =
+        `${answered} of ${questions.length} questions answered`;
+
+      document.getElementById("progress-bar")
+        .style.width = `${percentage}%`;
+
+      document.getElementById("progress-track")
+        .setAttribute("aria-valuenow", answered);
+    }
+
+    // Calculate each dimension independently.
 
     function calculateScore() {
 
@@ -247,31 +516,73 @@
       let adaptiveCount = 0;
       let maladaptiveCount = 0;
 
-      for (let i = 0; i < questions.length; i++) {
+      let firstMissing = null;
 
-        const answer =
-          document.querySelector(`input[name="q${i}"]:checked`);
+      questions.forEach((question, index) => {
+
+        const answer = document.querySelector(
+          `input[name="q${index}"]:checked`
+        );
+
+        const card = document.getElementById(
+          `question-${index}`
+        );
 
         if (!answer) {
 
-          alert("Please answer all questions before continuing.");
+          card.classList.add("missing");
+
+          if (firstMissing === null) {
+            firstMissing = index;
+          }
 
           return;
         }
 
+        card.classList.remove("missing");
+
         const value = Number(answer.value);
 
-        if (questions[i].type === "adaptive") {
-
+        if (question.type === "adaptive") {
           adaptiveTotal += value;
           adaptiveCount++;
-
         } else {
-
           maladaptiveTotal += value;
           maladaptiveCount++;
         }
+
+      });
+
+      // Require all responses.
+
+      if (firstMissing !== null) {
+
+        result.hidden = true;
+
+        errorMessage.textContent =
+          "Please answer all questions. " +
+          "Unanswered questions are highlighted.";
+
+        const missingCard = document.getElementById(
+          `question-${firstMissing}`
+        );
+
+        missingCard.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+
+        const firstInput =
+          missingCard.querySelector("input");
+
+        firstInput.focus({
+          preventScroll: true
+        });
+
+        return;
       }
+
+      // Scores are means on the original 1-5 scale.
 
       const adaptiveScore =
         adaptiveTotal / adaptiveCount;
@@ -279,98 +590,220 @@
       const maladaptiveScore =
         maladaptiveTotal / maladaptiveCount;
 
-      let profileTitle = "";
-      let interpretation = "";
-      let whatHelps = "";
+      showResults(adaptiveScore, maladaptiveScore);
+    }
 
-      // Relative response interpretation logic
+    // Create visual score display.
 
-      if (adaptiveScore > maladaptiveScore + 0.5) {
+    function scoreCard(title, score, type, description) {
 
-        profileTitle =
-          "Stronger Adaptive Perfectionism Pattern";
+      const percentage = (score / 5) * 100;
 
-        interpretation =
-          "Your responses suggest that your high standards may be more connected to motivation, growth, persistence, and achievement striving than to harsh self-evaluation.";
-
-        whatHelps = `
+      return `
         <div class="score-box">
-          <p><strong>What this pattern can mean:</strong> Your answers show a tendency toward high standards — and a belief that you're capable of reaching them. That's a promising combination: your standards push you forward, and your confidence lets you act on them.</p>
-          <p><strong>What helps next:</strong> keep a short study log — one row per session (when, how long, where, with whom, and one success). After a couple of weeks you'll have evidence about what actually works for you.</p>
-          <p><a href="study-log.pdf" download>Download the study log (PDF)</a> — print it, or save it and fill it in each week.</p>
-        </div>`;
 
-      }
+          <div class="score-label">
+            <span>${title}</span>
+            <span>${score.toFixed(2)} / 5</span>
+          </div>
 
-      else if (maladaptiveScore > adaptiveScore + 0.5) {
+          <div
+            class="score-track"
+            role="meter"
+            aria-label="${title}"
+            aria-valuemin="1"
+            aria-valuemax="5"
+            aria-valuenow="${score.toFixed(2)}"
+          >
+            <div
+              class="score-fill ${type}-fill"
+              style="width: ${percentage}%"
+            ></div>
+          </div>
 
-        profileTitle =
-          "Stronger Evaluative Concern Pattern";
+          <p class="score-description">
+            ${description}
+          </p>
 
-        interpretation =
-          "Your responses suggest that perfectionistic tendencies may be more connected to worry, dissatisfaction, fear of mistakes, self-criticism, or feelings of underpreparation.";
+        </div>
+      `;
+    }
 
-        whatHelps = `
-        <div class="score-box">
-          <p><strong>What this pattern can mean:</strong> Your responses suggest that while you have high standards to achieve your academic goals, other things — self-criticism, worry about mistakes, or never feeling satisfied — might be getting in the way of your success journey. Your standards push you forward, and they can still carry you there — the work isn't lowering the bar, it's loosening the critic's grip so you can actually use what you're capable of.</p>
-          <p><strong>One small practice to try this week:</strong> Pick one harsh thought from this week, write it down, then rewrite it the way a supportive coach would say it — same standard, kinder voice.</p>
-          <p><a href="study-log.pdf" download>Download the study log (PDF)</a> — after the rewrite, use it to track one success per session.</p>
-        </div>`;
+    // Present exploratory, non-classifying feedback.
 
-      }
+    function showResults(adaptiveScore, maladaptiveScore) {
 
-      else {
+      const adaptiveDescription =
+        "This score summarizes your responses to " +
+        "items about achievement striving, motivation, " +
+        "and academic performance standards.";
 
-        profileTitle =
-          "Mixed Perfectionism Pattern";
+      const maladaptiveDescription =
+        "This score summarizes your responses to " +
+        "items about evaluative concerns, dissatisfaction, " +
+        "self-criticism, and feeling underprepared.";
 
-        interpretation =
-          "Your responses suggest a mixed pattern in which both achievement striving and evaluative concerns may be present simultaneously.";
+      result.innerHTML = `
 
-        whatHelps = `
-        <div class="score-box">
-          <p><strong>What helps next:</strong> keep a short study log — one row per session (when, how long, where, with whom, and one success). After a couple of weeks you'll have evidence about what actually works for you.</p>
-          <p><a href="study-log.pdf" download>Download the study log (PDF)</a> — print it, or save it and fill it in each week.</p>
-        </div>`;
-      }
+        <h2>Your AMPERE Reflection</h2>
 
-      document.getElementById("result").innerHTML = `
+        <p>
+          Your responses are summarized across two
+          dimensions of perfectionism. Each score is
+          the average of the corresponding item responses,
+          ranging from 1 to 5.
+        </p>
 
-        <h2>${profileTitle}</h2>
+        <p>
+          Higher scores indicate greater agreement
+          with statements within that dimension.
+          The scores are not diagnostic ratings,
+          percentile ranks, or validated individual
+          classifications.
+        </p>
 
-        <div class="score-box">
+        ${scoreCard(
+          "Adaptive Perfectionism",
+          adaptiveScore,
+          "adaptive",
+          adaptiveDescription
+        )}
+
+        ${scoreCard(
+          "Maladaptive Perfectionism",
+          maladaptiveScore,
+          "maladaptive",
+          maladaptiveDescription
+        )}
+
+        <div class="reflection-box">
+
+          <h3>Reflecting on Your Responses</h3>
 
           <p>
-            <strong>Adaptive score:</strong>
-            ${adaptiveScore.toFixed(2)} / 5
+            Adaptive and maladaptive perfectionism
+            are distinct dimensions. It is possible
+            to endorse statements associated with
+            both dimensions.
           </p>
 
           <p>
-            <strong>Maladaptive score:</strong>
-            ${maladaptiveScore.toFixed(2)} / 5
+            Rather than comparing your two scores
+            to determine a single perfectionism
+            profile, consider how the experiences
+            represented by each dimension appear
+            in your academic life.
+          </p>
+
+          <h3>Questions to Consider</h3>
+
+          <ul>
+            <li>
+              When do your academic standards
+              help you stay motivated and engaged?
+            </li>
+
+            <li>
+              Are there situations in which your
+              expectations lead to worry,
+              dissatisfaction, or self-criticism?
+            </li>
+
+            <li>
+              What strategies help you pursue
+              academic goals while recognizing
+              your progress and learning?
+            </li>
+          </ul>
+
+          <h3>One Small Practice to Try</h3>
+
+          <p>
+            For the next week, keep a short study log.
+            Record when and where you studied,
+            what you worked on, and one thing
+            you learned or accomplished.
+          </p>
+
+          <p>
+            At the end of the week, review your
+            entries and consider which study
+            conditions supported your progress.
+          </p>
+
+          <p>
+            <a href="study-log.pdf" download>
+              Download the Study Log (PDF)
+            </a>
           </p>
 
         </div>
 
-        <p>${interpretation}</p>
-
-        ${whatHelps}
-
         <p class="disclaimer">
 
-          This result is intended for educational and reflective purposes only.
+          <strong>Important:</strong>
+          This reflection tool is intended for
+          educational and exploratory purposes only.
 
-          The prototype uses exploratory interpretation logic based on relative
-          response tendencies and should not be interpreted as a diagnosis,
-          clinical assessment, or validated population classification.
+          AMPERE was developed through psychometric
+          research with engineering undergraduates.
+          The individualized feedback presented here
+          is an exploratory application of that work
+          and has not been separately validated.
+
+          Results should not be interpreted as a
+          diagnosis, clinical assessment, or
+          validated population classification.
 
         </p>
 
       `;
+
+      result.hidden = false;
+
+      result.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+      result.focus({
+        preventScroll: true
+      });
     }
+
+    // Reset questionnaire.
+
+    function resetQuiz() {
+
+      quiz.reset();
+
+      document.querySelectorAll(".question")
+        .forEach(card => {
+          card.classList.remove("missing");
+        });
+
+      result.hidden = true;
+      result.innerHTML = "";
+
+      errorMessage.textContent = "";
+
+      updateProgress();
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    document.getElementById("results-button")
+      .addEventListener("click", calculateScore);
+
+    document.getElementById("reset-button")
+      .addEventListener("click", resetQuiz);
+
+    updateProgress();
 
   </script>
 
 </body>
-
 </html>
