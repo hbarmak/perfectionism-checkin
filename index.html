@@ -1,50 +1,56 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>AMPERE Interactive Reflection</title>
 
   <style>
+    :root {
+      --ink: #24313d;
+      --muted: #52616e;
+      --blue: #527d9a;
+      --orange: #c58b66;
+      --background: #faf9f7;
+      --border: #dce1e5;
+    }
+
     * {
       box-sizing: border-box;
     }
 
     body {
-      font-family: Arial, sans-serif;
-      max-width: 820px;
-      margin: 40px auto;
+      font-family: Arial, Helvetica, sans-serif;
+      max-width: 850px;
+      margin: 35px auto;
       padding: 20px;
+      background: var(--background);
+      color: var(--ink);
       line-height: 1.7;
-      color: #222;
-      background: #fafafa;
+    }
+
+    h1, h2, h3, h4 {
+      line-height: 1.35;
     }
 
     h1 {
-      margin-bottom: 8px;
-      line-height: 1.3;
+      margin-bottom: 12px;
     }
 
-    h2, h3 {
-      line-height: 1.4;
-    }
-
-    .intro {
-      background: #f4f1ee;
+    .intro, .reflection {
+      background: #f1f0ed;
+      border-radius: 15px;
       padding: 24px;
-      border-radius: 16px;
-      margin-bottom: 30px;
+      margin: 24px 0;
     }
 
-    .question {
+    .question, #result, .resource {
       background: white;
-      border: 1px solid #ddd;
+      border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 22px;
+      padding: 22px;
+      margin-bottom: 18px;
     }
 
     .question.missing {
@@ -54,8 +60,8 @@
 
     fieldset {
       border: 0;
-      padding: 0;
       margin: 0;
+      padding: 0;
       min-width: 0;
     }
 
@@ -65,110 +71,104 @@
       width: 100%;
     }
 
-    label {
+    .option {
       display: block;
       padding: 5px 0;
       cursor: pointer;
     }
 
     input[type="radio"] {
+      accent-color: #315777;
       margin-right: 10px;
-      accent-color: #283f5b;
     }
 
-    button {
-      background: #222;
+    button, .download {
+      display: inline-block;
+      background: #283f5b;
       color: white;
       border: none;
-      border-radius: 10px;
-      padding: 14px 22px;
-      font-size: 16px;
+      border-radius: 9px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: bold;
       cursor: pointer;
-      margin: 10px 10px 10px 0;
+      text-decoration: none;
+      margin: 6px 8px 6px 0;
     }
 
-    button:hover {
-      background: #444;
+    button:hover, .download:hover {
+      background: #405f80;
+    }
+
+    .secondary {
+      background: #e7e9eb;
+      color: var(--ink);
+    }
+
+    .secondary:hover {
+      background: #d8dce0;
     }
 
     button:focus-visible,
     a:focus-visible,
-    input:focus-visible {
-      outline: 3px solid #3977b8;
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid #3779b6;
       outline-offset: 3px;
     }
 
-    .secondary-button {
-      background: #eee;
-      color: #222;
-      border: 1px solid #ccc;
+    .progress {
+      margin: 28px 0;
     }
 
-    .secondary-button:hover {
-      background: #ddd;
-    }
-
-    .progress-container {
-      margin: 25px 0 30px;
-    }
-
-    .progress-track {
-      height: 12px;
-      background: #e3e3e3;
+    .progress-track, .score-track {
+      width: 100%;
+      background: #e1e5e8;
       border-radius: 20px;
       overflow: hidden;
     }
 
-    #progress-bar {
-      height: 100%;
+    .progress-track {
+      height: 12px;
+    }
+
+    #progress-fill {
       width: 0%;
-      background: #486c88;
-      transition: width 0.25s ease;
+      height: 100%;
+      background: var(--blue);
+      transition: width .2s;
     }
 
-    #progress-text {
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
-
-    #error-message {
+    #error {
       color: #a32929;
       font-weight: bold;
-      margin: 12px 0;
     }
 
     #result {
-      margin-top: 34px;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 16px;
-      padding: 24px;
+      margin-top: 30px;
     }
 
-    #result[hidden] {
-      display: none;
+    [hidden] {
+      display: none !important;
     }
 
-    .score-box {
-      background: #f7f7f7;
+    .score {
+      background: #f5f7f8;
       border-radius: 12px;
       padding: 20px;
       margin: 18px 0;
     }
 
-    .score-label {
+    .score-heading {
       display: flex;
       justify-content: space-between;
       gap: 15px;
       font-weight: bold;
-      margin-bottom: 8px;
     }
 
     .score-track {
-      height: 18px;
-      background: #e1e1e1;
-      border-radius: 20px;
-      overflow: hidden;
+      height: 16px;
+      margin-top: 10px;
     }
 
     .score-fill {
@@ -177,113 +177,84 @@
     }
 
     .adaptive-fill {
-      background: #547e98;
+      background: var(--blue);
     }
 
     .maladaptive-fill {
-      background: #c48a63;
+      background: var(--orange);
     }
 
-    .score-description {
-      font-size: 14px;
-      color: #555;
-      margin-top: 10px;
+    .mixed {
+      background: #edf5f2;
+      border: 1px solid #b7d3c8;
+      border-radius: 15px;
+      padding: 24px;
+      margin: 25px 0;
     }
 
-    .reflection-box {
-      background: #f4f1ee;
-      padding: 22px;
-      border-radius: 14px;
-      margin-top: 25px;
-    }
-
-    .reflection-box ul {
-      padding-left: 22px;
-    }
-
-    .reflection-box li {
-      margin-bottom: 12px;
-    }
-
-    .mixed-box {
-      background: #eef4f3;
-      border: 1px solid #b9d4ce;
-      border-radius: 14px;
-      padding: 22px;
-      margin-top: 25px;
-    }
-
-    .mixed-box h3 {
-      margin-top: 0;
-    }
-
-    .resource-card {
+    .activity {
       background: white;
-      border: 1px solid #ddd;
+      border: 1px solid #c9ddd4;
       border-radius: 12px;
       padding: 20px;
-      margin: 18px 0;
+      margin-top: 20px;
     }
 
-    .resource-card h4 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      font-size: 18px;
-    }
-
-    .resource-card.featured {
-      border: 2px solid #547e98;
-    }
-
-    .resource-note {
-      font-size: 14px;
-      color: #555;
-      margin-top: 16px;
-    }
-
-    .download-link {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 10px 15px;
-      background: #283f5b;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
+    .activity label {
+      display: block;
       font-weight: bold;
+      margin-top: 20px;
     }
 
-    .download-link:hover {
-      background: #405f80;
+    .activity textarea {
+      display: block;
+      width: 100%;
+      min-height: 95px;
+      padding: 12px;
+      margin-top: 8px;
+      border: 1px solid #b7c5c0;
+      border-radius: 8px;
+      font: inherit;
+      resize: vertical;
+    }
+
+    .resource {
+      margin: 15px 0;
+    }
+
+    .resource h4 {
+      margin-top: 0;
+    }
+
+    .note, .disclaimer {
+      color: var(--muted);
+      font-size: 14px;
     }
 
     .disclaimer {
-      font-size: 14px;
-      color: #555;
-      margin-top: 24px;
-      border-top: 1px solid #ddd;
+      border-top: 1px solid var(--border);
+      margin-top: 25px;
       padding-top: 20px;
     }
 
-    .privacy-note {
+    .status {
+      display: block;
       font-size: 14px;
-      color: #555;
+      margin-top: 8px;
     }
 
     @media (max-width: 600px) {
       body {
-        margin: 10px auto;
+        margin: 0 auto;
         padding: 15px;
       }
 
-      .intro,
-      .question,
-      #result,
-      .reflection-box,
-      .mixed-box {
-        padding: 18px;
+      .intro, .reflection, .question,
+      #result, .mixed, .activity {
+        padding: 17px;
       }
 
-      .score-label {
+      .score-heading {
         flex-wrap: wrap;
       }
     }
@@ -292,110 +263,94 @@
 
 <body>
 
-  <h1>
-    Adaptive and Maladaptive Perfectionism
-    in Engineering (AMPERE)
-  </h1>
+  <h1>AMPERE Interactive Reflection</h1>
 
   <div class="intro">
+    <h2>Adaptive and Maladaptive Perfectionism in Engineering</h2>
 
     <p>
-      This exploratory reflection tool translates the
-      AMPERE framework (Adaptive and Maladaptive
-      Perfectionism in Engineering) into an interactive
-      browser-based experience inspired by doctoral
-      research conducted by Dr. Haleh Brotherton.
+      This exploratory reflection tool translates the AMPERE
+      framework into an interactive browser-based experience
+      inspired by doctoral research conducted by
+      Dr. Haleh Brotherton.
     </p>
 
     <p>
       AMPERE examines two dimensions of perfectionism:
       adaptive perfectionism, associated with achievement
-      striving and high academic standards, and
-      maladaptive perfectionism, associated with
-      evaluative concerns and self-criticism.
+      striving and high academic standards, and maladaptive
+      perfectionism, associated with evaluative concerns
+      and self-criticism.
     </p>
 
     <p>
-      These dimensions can coexist. Your responses
-      will be summarized separately to support
-      personal reflection rather than to assign
-      you to a fixed perfectionism category.
+      These dimensions can coexist. Your responses will be
+      summarized separately to support reflection rather
+      than assign you to a fixed perfectionism category.
     </p>
 
     <p>
-      The instrument was developed in the context
-      of engineering undergraduate education.
-      The feedback provided here is exploratory
-      and has not been independently validated
-      as an individual interpretation system.
+      The original instrument was developed with engineering
+      undergraduates. The individualized feedback and
+      activities on this website are exploratory educational
+      applications and have not been separately validated.
     </p>
 
-    <p>
-      Some reflection content is informed by
-      thresholds derived from the original
-      dissertation research sample. These
-      thresholds have not been validated as
-      cutoffs for classifying individuals.
+    <p class="note">
+      <strong>Privacy:</strong> Responses are processed
+      locally in your browser. This page does not transmit
+      or save your questionnaire answers or written reflections.
     </p>
-
-    <p class="privacy-note">
-      <strong>Privacy:</strong>
-      This standalone version processes your
-      responses locally in your browser.
-      It does not send or save your answers
-      to a server.
-    </p>
-
   </div>
 
-  <div class="progress-container">
-
-    <div id="progress-text" aria-live="polite">
+  <div class="progress">
+    <p id="progress-text" aria-live="polite">
       0 of 14 questions answered
-    </div>
+    </p>
 
     <div
-      class="progress-track"
       id="progress-track"
+      class="progress-track"
       role="progressbar"
       aria-label="Questionnaire completion"
       aria-valuemin="0"
       aria-valuemax="14"
       aria-valuenow="0"
     >
-      <div id="progress-bar"></div>
+      <div id="progress-fill"></div>
     </div>
-
   </div>
 
   <form id="quiz" novalidate></form>
 
-  <p id="error-message" role="alert"></p>
+  <p id="error" role="alert"></p>
 
   <button type="button" id="results-button">
     See My Results
   </button>
 
-  <button
-    type="button"
-    id="reset-button"
-    class="secondary-button"
-  >
+  <button type="button" id="reset-button" class="secondary">
     Start Over
   </button>
 
   <section
     id="result"
-    aria-label="AMPERE reflection results"
+    aria-label="AMPERE results"
     tabindex="-1"
     hidden
   ></section>
 
   <script>
+    "use strict";
 
-    // AMPERE items from the supplied prototype.
-    // Verify wording and response anchors against
-    // the finalized research instrument.
+    // Dissertation-derived sample thresholds.
+    // NOT validated individual classification cutoffs.
+
+    const ADAPTIVE_THRESHOLD = 4.25;
+    const MALADAPTIVE_THRESHOLD = 3.36;
+
+    // Item wording should be checked against the
+    // final published AMPERE instrument.
 
     const questions = [
       {
@@ -456,56 +411,42 @@
       }
     ];
 
-    const responseOptions = [
-      { value: 1, label: "Strongly disagree" },
-      { value: 2, label: "Disagree" },
-      { value: 3, label: "Neutral" },
-      { value: 4, label: "Agree" },
-      { value: 5, label: "Strongly agree" }
+    const options = [
+      "Strongly disagree",
+      "Disagree",
+      "Neutral",
+      "Agree",
+      "Strongly agree"
     ];
-
-    // Dissertation-derived research thresholds.
-    // These are sample-specific grouping values,
-    // NOT validated individual classification cutoffs.
-
-    const MIXED_ADAPTIVE_THRESHOLD = 4.25;
-    const MIXED_MALADAPTIVE_THRESHOLD = 3.36;
 
     const quiz = document.getElementById("quiz");
     const result = document.getElementById("result");
+    const error = document.getElementById("error");
 
-    const errorMessage =
-      document.getElementById("error-message");
-
-    // Build the questionnaire.
+    // Build all 14 questions.
 
     questions.forEach((question, index) => {
-
       const card = document.createElement("div");
       card.className = "question";
       card.id = `question-${index}`;
 
       const fieldset = document.createElement("fieldset");
       const legend = document.createElement("legend");
-
-      legend.textContent =
-        `${index + 1}. ${question.text}`;
-
+      legend.textContent = `${index + 1}. ${question.text}`;
       fieldset.appendChild(legend);
 
-      responseOptions.forEach(option => {
-
+      options.forEach((option, optionIndex) => {
         const label = document.createElement("label");
-        const input = document.createElement("input");
+        label.className = "option";
 
-        input.type = "radio";
-        input.name = `q${index}`;
-        input.value = String(option.value);
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = `q${index}`;
+        radio.value = optionIndex + 1;
 
-        label.appendChild(input);
-
+        label.appendChild(radio);
         label.appendChild(
-          document.createTextNode(option.label)
+          document.createTextNode(option)
         );
 
         fieldset.appendChild(label);
@@ -515,75 +456,53 @@
       quiz.appendChild(card);
     });
 
-    // Update progress when responses change.
+    function updateProgress() {
+      let answered = 0;
+
+      questions.forEach((question, index) => {
+        if (quiz.querySelector(
+          `input[name="q${index}"]:checked`
+        )) {
+          answered++;
+        }
+      });
+
+      document.getElementById("progress-text")
+        .textContent =
+        `${answered} of ${questions.length} questions answered`;
+
+      document.getElementById("progress-fill")
+        .style.width =
+        `${answered / questions.length * 100}%`;
+
+      document.getElementById("progress-track")
+        .setAttribute("aria-valuenow", answered);
+    }
 
     quiz.addEventListener("change", event => {
+      if (event.target.type !== "radio") return;
 
-      if (event.target.type !== "radio") {
-        return;
-      }
+      const card = event.target.closest(".question");
+      if (card) card.classList.remove("missing");
 
-      const questionCard =
-        event.target.closest(".question");
+      error.textContent = "";
 
-      if (questionCard) {
-        questionCard.classList.remove("missing");
-      }
-
-      errorMessage.textContent = "";
-
-      // Hide outdated results after an answer changes.
-
+      // Invalidate results when questionnaire answers change.
       result.hidden = true;
       result.innerHTML = "";
 
       updateProgress();
     });
 
-    function updateProgress() {
-
-      let answered = 0;
-
-      questions.forEach((question, index) => {
-
-        const selected = document.querySelector(
-          `input[name="q${index}"]:checked`
-        );
-
-        if (selected) {
-          answered++;
-        }
-      });
-
-      const percentage =
-        (answered / questions.length) * 100;
-
-      document.getElementById("progress-text")
-        .textContent =
-        `${answered} of ${questions.length} questions answered`;
-
-      document.getElementById("progress-bar")
-        .style.width = `${percentage}%`;
-
-      document.getElementById("progress-track")
-        .setAttribute("aria-valuenow", answered);
-    }
-
-    // Calculate the two subscale means independently.
-
-    function calculateScore() {
-
+    function calculateScores() {
       let adaptiveTotal = 0;
       let maladaptiveTotal = 0;
-
       let adaptiveCount = 0;
       let maladaptiveCount = 0;
-
       let firstMissing = null;
 
       questions.forEach((question, index) => {
-
-        const answer = document.querySelector(
+        const selected = quiz.querySelector(
           `input[name="q${index}"]:checked`
         );
 
@@ -591,8 +510,7 @@
           `question-${index}`
         );
 
-        if (!answer) {
-
+        if (!selected) {
           card.classList.add("missing");
 
           if (firstMissing === null) {
@@ -603,8 +521,7 @@
         }
 
         card.classList.remove("missing");
-
-        const value = Number(answer.value);
+        const value = Number(selected.value);
 
         if (question.type === "adaptive") {
           adaptiveTotal += value;
@@ -615,52 +532,40 @@
         }
       });
 
-      // Require responses to all 14 items.
-
       if (firstMissing !== null) {
-
         result.hidden = true;
-
-        errorMessage.textContent =
-          "Please answer all questions. " +
+        error.textContent =
+          "Please answer all 14 questions. " +
           "Unanswered questions are highlighted.";
 
-        const missingCard = document.getElementById(
+        const missing = document.getElementById(
           `question-${firstMissing}`
         );
 
-        missingCard.scrollIntoView({
+        missing.scrollIntoView({
           behavior: "smooth",
           block: "center"
         });
 
-        missingCard.querySelector("input").focus({
+        missing.querySelector("input").focus({
           preventScroll: true
         });
 
         return;
       }
 
-      const adaptiveScore =
-        adaptiveTotal / adaptiveCount;
+      const adaptive = adaptiveTotal / adaptiveCount;
+      const maladaptive = maladaptiveTotal / maladaptiveCount;
 
-      const maladaptiveScore =
-        maladaptiveTotal / maladaptiveCount;
-
-      showResults(adaptiveScore, maladaptiveScore);
+      showResults(adaptive, maladaptive);
     }
 
-    // Create visual score cards.
-
     function scoreCard(title, score, type, description) {
-
-      // The scale starts at 1, not 0.
-      const percentage = ((score - 1) / 4) * 100;
+      const percentage = (score - 1) / 4 * 100;
 
       return `
-        <div class="score-box">
-
-          <div class="score-label">
+        <div class="score">
+          <div class="score-heading">
             <span>${title}</span>
             <span>${score.toFixed(2)} / 5</span>
           </div>
@@ -671,45 +576,81 @@
             aria-label="${title}"
             aria-valuemin="1"
             aria-valuemax="5"
-            aria-valuenow="${score.toFixed(2)}"
+            aria-valuenow="${score}"
           >
             <div
               class="score-fill ${type}-fill"
-              style="width: ${percentage}%"
+              style="width:${percentage}%"
             ></div>
           </div>
 
-          <p class="score-description">
-            ${description}
-          </p>
-
+          <p class="note">${description}</p>
         </div>
       `;
     }
 
-    // Determine whether both dissertation-derived
-    // research thresholds are met.
-    //
-    // This is an exploratory co-endorsement rule,
-    // not a validated individual classification.
+    // Compare unrounded scores to research thresholds.
+    // Display rounding must not affect the decision.
 
-    function meetsMixedReflectionRule(
-      adaptiveScore,
-      maladaptiveScore
-    ) {
-
+    function meetsMixedRule(adaptive, maladaptive) {
       return (
-        adaptiveScore >= MIXED_ADAPTIVE_THRESHOLD &&
-        maladaptiveScore >= MIXED_MALADAPTIVE_THRESHOLD
+        adaptive >= ADAPTIVE_THRESHOLD &&
+        maladaptive >= MALADAPTIVE_THRESHOLD
       );
     }
 
-    // Mixed co-endorsement reflection.
-
-    function getMixedReflection() {
-
+    function studyLogCard() {
       return `
-        <div class="mixed-box">
+        <div class="resource">
+          <h4>Study Log</h4>
+
+          <p>
+            Track your academic effort, learning conditions,
+            and accomplishments. Reflect on which habits
+            support your goals and recognize progress
+            beyond a single outcome.
+          </p>
+
+          <a
+            class="download"
+            href="study-log.pdf"
+            download
+          >
+            Download Study Log (PDF)
+          </a>
+        </div>
+      `;
+    }
+
+    function criticCoachCard() {
+      return `
+        <div class="resource">
+          <h4>Critic vs. Coach</h4>
+
+          <p>
+            Identify a self-critical thought and explore
+            how to respond in a more constructive,
+            supportive way without abandoning
+            meaningful academic standards.
+          </p>
+
+          <a
+            class="download"
+            href="critic-vs-coach.pdf"
+            download
+          >
+            Download Critic vs. Coach (PDF)
+          </a>
+        </div>
+      `;
+    }
+
+    // Dedicated mixed-pattern reflection.
+    // This is an educational activity, not treatment.
+
+    function mixedReflection() {
+      return `
+        <section class="mixed">
 
           <h3>
             When High Standards Both Motivate
@@ -718,401 +659,299 @@
 
           <p>
             Your responses meet the exploratory
-            co-endorsement criteria derived from
-            the original AMPERE dissertation sample.
+            co-endorsement criteria derived from the
+            original AMPERE dissertation sample.
           </p>
 
           <p>
-            This means that achievement striving
-            and evaluative concerns may both be
-            relevant to your academic experiences.
-            You might feel motivated to pursue
-            ambitious goals while also experiencing
-            worry, self-criticism, or dissatisfaction.
+            This suggests that achievement striving
+            and evaluative concerns may both be relevant
+            to your academic experiences.
           </p>
 
           <p>
-            These experiences are not necessarily
-            contradictory. High standards may
-            support motivation in some situations
-            while creating additional pressure
-            in others.
+            You may find that some academic standards
+            help you stay motivated while expectations
+            surrounding those standards sometimes
+            contribute to worry, dissatisfaction,
+            or self-criticism.
           </p>
 
-          <h3>
-            Reflection: Two Sides of the Same Standard
-          </h3>
-
-          <ol>
-            <li>
-              What academic standard motivates
-              you to work toward your goals?
-            </li>
-
-            <li>
-              When might that same standard
-              create unnecessary pressure,
-              worry, or self-criticism?
-            </li>
-
-            <li>
-              How could you maintain your
-              commitment to excellence while
-              responding more constructively
-              to mistakes or setbacks?
-            </li>
-          </ol>
-
-          <p class="resource-note">
-            <strong>Research interpretation:</strong>
-            The thresholds used for this reflection
-            are adaptive mean &ge; 4.25 and
-            maladaptive mean &ge; 3.36.
-            They were derived from the original
-            dissertation research sample.
-            They have not been validated as
-            individual classification cutoffs
-            and do not establish that a
-            participant belongs to a fixed
-            psychological category.
+          <p>
+            This does not mean you need to lower
+            your standards. Instead, you might
+            explore how to pursue meaningful goals
+            with greater flexibility.
           </p>
 
-        </div>
-      `;
-    }
+          <div class="activity">
 
-    // Build optional educational resource cards.
-
-    function resourceCard(type, featured = false) {
-
-      const featuredClass =
-        featured ? " featured" : "";
-
-      if (type === "study") {
-
-        return `
-          <div class="resource-card${featuredClass}">
-
-            <h4>Study Log</h4>
+            <h3>
+              Keep the Standard, Change the Pressure
+            </h3>
 
             <p>
-              Explore how your study habits,
-              learning conditions, and
-              accomplishments relate to
-              your academic goals.
+              This optional four-part activity invites
+              you to explore the relationship between
+              your achievement goals and the pressure
+              you may experience while pursuing them.
             </p>
+
+            <label for="mixed-goal">
+              1. The Standard I Want to Keep
+            </label>
 
             <p>
-              For the next week, record when
-              and where you studied, what
-              you worked on, and one thing
-              you learned or accomplished.
+              What academic goal or standard genuinely
+              motivates you?
             </p>
+
+            <textarea
+              id="mixed-goal"
+              placeholder="Example: I want to produce careful, high-quality engineering work."
+            ></textarea>
+
+            <label for="mixed-pressure">
+              2. The Pressure I Want to Reconsider
+            </label>
 
             <p>
-              At the end of the week,
-              review your entries and
-              consider which conditions
-              supported your progress.
+              Does any expectation or self-critical
+              thought make that goal harder to pursue?
             </p>
 
-            <a
-              class="download-link"
-              href="study-log.pdf"
-              download
-            >
-              Download Study Log (PDF)
-            </a>
+            <textarea
+              id="mixed-pressure"
+              placeholder="Example: If I make one mistake, my work is not good enough."
+            ></textarea>
+
+            <label for="mixed-flexibility">
+              3. A More Flexible Approach
+            </label>
+
+            <p>
+              How could you pursue the same goal
+              while allowing room for mistakes,
+              feedback, and learning?
+            </p>
+
+            <textarea
+              id="mixed-flexibility"
+              placeholder="Example: I can aim for accuracy while treating mistakes as opportunities to improve."
+            ></textarea>
+
+            <label for="mixed-action">
+              4. One Action This Week
+            </label>
+
+            <p>
+              What specific, manageable action
+              could help you practice this approach?
+            </p>
+
+            <textarea
+              id="mixed-action"
+              placeholder="Example: Ask for feedback on a draft instead of revising it indefinitely."
+            ></textarea>
+
+            <button type="button" id="copy-reflection">
+              Copy My Reflection
+            </button>
+
+            <span
+              id="copy-status"
+              class="status"
+              role="status"
+              aria-live="polite"
+            ></span>
+
+            <p class="note">
+              Your written responses are not sent
+              to a server or automatically saved.
+              Copy your reflection before leaving
+              the page if you want to keep it.
+            </p>
 
           </div>
-        `;
-      }
 
-      return `
-        <div class="resource-card${featuredClass}">
-
-          <h4>Critic vs. Coach</h4>
+          <h3>Optional Follow-Up Activities</h3>
 
           <p>
-            If you notice that worry,
-            self-criticism, or dissatisfaction
-            affects your academic experience,
-            consider practicing a more
-            supportive way of responding
-            to yourself.
+            The two worksheets complement different
+            aspects of this reflection.
+            Both are presented equally, and you
+            may choose either or both.
           </p>
 
-          <p>
-            This exercise invites you to
-            identify a self-critical thought
-            and reframe it using a more
-            constructive and encouraging
-            voice, without abandoning
-            your academic standards.
+          ${studyLogCard()}
+          ${criticCoachCard()}
+
+          <p class="note">
+            <strong>Research limitation:</strong>
+            The adaptive threshold of 4.25 and
+            maladaptive threshold of 3.36 were
+            derived from the original dissertation
+            research sample. They have not been
+            validated as individual classification
+            cutoffs. Meeting these criteria does
+            not establish a fixed psychological
+            category or determine what support
+            an individual needs.
           </p>
 
-          <a
-            class="download-link"
-            href="critic-vs-coach.pdf"
-            download
-          >
-            Download Critic vs. Coach (PDF)
-          </a>
-
-        </div>
+        </section>
       `;
     }
 
-    // Personalize resource presentation.
-    //
-    // Mixed co-endorsement takes priority.
-    // Otherwise, order the two worksheets
-    // using the relative subscale means.
-    //
-    // Neither rule has been validated as
-    // an intervention recommendation algorithm.
+    // Other participants still see both worksheets.
+    // Ordering is exploratory, not validated.
 
-    function getRecommendedResources(
-      adaptiveScore,
-      maladaptiveScore
-    ) {
+    function generalResources(adaptive, maladaptive) {
+      let cards;
+      let explanation;
 
-      const isMixed = meetsMixedReflectionRule(
-        adaptiveScore,
-        maladaptiveScore
-      );
-
-      let resources = "";
-      let explanation = "";
-
-      if (isMixed) {
-
-        resources =
-          resourceCard("study") +
-          resourceCard("critic");
-
-        explanation =
-          "Both worksheets are presented with equal " +
-          "prominence because your responses meet " +
-          "the dissertation-derived exploratory " +
-          "co-endorsement criteria.";
-
-      } else if (maladaptiveScore > adaptiveScore) {
-
-        resources =
-          resourceCard("critic", true) +
-          resourceCard("study");
-
+      if (maladaptive > adaptive) {
+        cards = criticCoachCard() + studyLogCard();
         explanation =
           "Critic vs. Coach appears first because " +
-          "your maladaptive subscale mean was " +
-          "numerically higher than your adaptive mean.";
-
-      } else if (adaptiveScore > maladaptiveScore) {
-
-        resources =
-          resourceCard("study", true) +
-          resourceCard("critic");
-
+          "the maladaptive subscale mean was numerically higher.";
+      } else if (adaptive > maladaptive) {
+        cards = studyLogCard() + criticCoachCard();
         explanation =
-          "Study Log appears first because your " +
-          "adaptive subscale mean was numerically " +
-          "higher than your maladaptive mean.";
-
+          "Study Log appears first because " +
+          "the adaptive subscale mean was numerically higher.";
       } else {
-
-        resources =
-          resourceCard("study") +
-          resourceCard("critic");
-
+        cards = studyLogCard() + criticCoachCard();
         explanation =
-          "Your two subscale means were equal, " +
-          "so neither worksheet is prioritized.";
+          "The subscale means were equal, so neither " +
+          "worksheet is prioritized.";
       }
 
       return `
-        <div class="reflection-box">
-
+        <div class="reflection">
           <h3>Explore Your Reflection Resources</h3>
 
-          <p>
-            These worksheets offer two different
-            opportunities to reflect on your
-            academic experiences.
-          </p>
+          <p>${explanation}</p>
 
           <p>
-            <strong>Why these suggestions?</strong>
-            ${explanation}
+            Both worksheets are available regardless
+            of your scores. Choose whichever activity
+            seems useful to your own experience.
           </p>
 
-          <p>
-            Both resources are available
-            regardless of your scores.
-            You may choose either or both.
+          ${cards}
+
+          <p class="note">
+            Worksheet ordering is an exploratory
+            design choice, not a validated method
+            of selecting individualized support.
           </p>
-
-          ${resources}
-
-          <p class="resource-note">
-            <strong>About these suggestions:</strong>
-            Worksheet presentation is based on
-            exploratory scoring rules.
-            These rules have not been validated
-            for determining which educational
-            activity is most beneficial
-            for an individual.
-          </p>
-
         </div>
       `;
     }
 
-    // Display the complete results experience.
-
-    function showResults(
-      adaptiveScore,
-      maladaptiveScore
-    ) {
-
-      const adaptiveDescription =
-        "This score summarizes your responses to " +
-        "items about achievement striving, motivation, " +
-        "and academic performance standards.";
-
-      const maladaptiveDescription =
-        "This score summarizes your responses to " +
-        "items about evaluative concerns, dissatisfaction, " +
-        "self-criticism, and feeling underprepared.";
-
-      const isMixed = meetsMixedReflectionRule(
-        adaptiveScore,
-        maladaptiveScore
+    function showResults(adaptive, maladaptive) {
+      const isMixed = meetsMixedRule(
+        adaptive,
+        maladaptive
       );
 
-      const mixedReflection =
-        isMixed ? getMixedReflection() : "";
-
-      const recommendedResources =
-        getRecommendedResources(
-          adaptiveScore,
-          maladaptiveScore
-        );
-
       result.innerHTML = `
-
         <h2>Your AMPERE Reflection</h2>
 
         <p>
-          Your responses are summarized
-          across two dimensions of perfectionism.
-          Each score is the average of the
-          corresponding item responses,
-          ranging from 1 to 5.
+          Your scores summarize agreement with
+          two distinct dimensions of perfectionism.
+          Each score is an average ranging from 1 to 5.
         </p>
 
         <p>
-          Higher scores indicate greater
-          agreement with statements within
-          that dimension. The scores are
-          not diagnostic ratings, percentile
-          ranks, or validated individual
-          classifications.
+          Higher scores indicate greater agreement
+          with statements within that dimension.
+          Scores are not diagnoses, percentile ranks,
+          or validated individual classifications.
         </p>
 
         ${scoreCard(
           "Adaptive Perfectionism",
-          adaptiveScore,
+          adaptive,
           "adaptive",
-          adaptiveDescription
+          "Achievement striving, motivation, and academic performance standards."
         )}
 
         ${scoreCard(
           "Maladaptive Perfectionism",
-          maladaptiveScore,
+          maladaptive,
           "maladaptive",
-          maladaptiveDescription
+          "Evaluative concerns, dissatisfaction, self-criticism, and feeling underprepared."
         )}
 
-        <div class="reflection-box">
-
+        <div class="reflection">
           <h3>Reflecting on Your Responses</h3>
 
           <p>
             Adaptive and maladaptive perfectionism
-            are distinct dimensions. It is possible
-            to endorse statements associated
-            with both dimensions.
+            are distinct dimensions that may coexist.
+            Rather than assigning yourself a fixed
+            category, consider how each dimension
+            appears in your academic experiences.
           </p>
-
-          <p>
-            Rather than using your scores
-            to determine a fixed perfectionism
-            profile, consider how the experiences
-            represented by each dimension
-            appear in your academic life.
-          </p>
-
-          <h3>Questions to Consider</h3>
 
           <ul>
             <li>
               When do your academic standards
-              help you stay motivated and engaged?
+              support motivation and engagement?
             </li>
 
             <li>
-              Are there situations in which
-              your expectations lead to worry,
-              dissatisfaction, or self-criticism?
+              When might your expectations contribute
+              to worry or dissatisfaction?
             </li>
 
             <li>
-              What strategies help you pursue
-              academic goals while recognizing
-              your progress and learning?
+              What helps you pursue your goals
+              while recognizing progress and learning?
             </li>
           </ul>
-
         </div>
 
-        ${mixedReflection}
-
-        ${recommendedResources}
+        ${
+          isMixed
+            ? mixedReflection()
+            : generalResources(adaptive, maladaptive)
+        }
 
         <p class="disclaimer">
-
           <strong>Important:</strong>
-          This reflection tool is intended
-          for educational and exploratory
-          purposes only.
+          This reflection tool is intended for
+          educational and exploratory purposes only.
 
-          AMPERE was developed through
-          psychometric research with
-          engineering undergraduates.
+          AMPERE was developed through psychometric
+          research with engineering undergraduates.
 
-          The individualized feedback
-          presented here is an exploratory
-          application of that work and
-          has not been separately validated.
+          The feedback and activities on this website
+          have not been separately validated as
+          individualized assessments or interventions.
 
           The dissertation-derived thresholds
-          used for the mixed reflection
+          (adaptive ≥ 4.25 and maladaptive ≥ 3.36)
           are sample-specific research values,
-          not validated individual cutoffs.
+          not validated cutoffs for classifying
+          individuals.
 
-          Results and resource suggestions
-          should not be interpreted as
-          a diagnosis, clinical assessment,
-          validated population classification,
-          or evidence of which intervention
-          an individual needs.
-
+          Results should not be interpreted as
+          a clinical diagnosis, validated population
+          classification, or evidence that a
+          particular intervention is needed
+          or effective.
         </p>
-
       `;
 
       result.hidden = false;
+
+      if (isMixed) {
+        attachReflectionCopy();
+      }
 
       result.scrollIntoView({
         behavior: "smooth",
@@ -1124,10 +963,63 @@
       });
     }
 
-    // Reset the questionnaire.
+    // Copy the four mixed-reflection responses.
+
+    function attachReflectionCopy() {
+      const button = document.getElementById(
+        "copy-reflection"
+      );
+
+      button.addEventListener("click", async () => {
+        const fields = [
+          ["The Standard I Want to Keep", "mixed-goal"],
+          ["The Pressure I Want to Reconsider", "mixed-pressure"],
+          ["A More Flexible Approach", "mixed-flexibility"],
+          ["One Action This Week", "mixed-action"]
+        ];
+
+        const content =
+          "AMPERE: Keep the Standard, Change the Pressure\n\n" +
+          fields.map(([title, id]) => {
+            const answer = document.getElementById(id).value;
+            return `${title}\n${answer || "(Not answered)"}`;
+          }).join("\n\n");
+
+        const status = document.getElementById(
+          "copy-status"
+        );
+
+        try {
+          await navigator.clipboard.writeText(content);
+          status.textContent = "Reflection copied to clipboard.";
+        } catch (err) {
+          // Fallback for browsers where Clipboard API
+          // access is unavailable.
+          const fallback = document.createElement("textarea");
+          fallback.value = content;
+          fallback.style.position = "fixed";
+          fallback.style.opacity = "0";
+          document.body.appendChild(fallback);
+          fallback.select();
+
+          let copied = false;
+
+          try {
+            copied = document.execCommand("copy");
+          } catch (copyError) {
+            copied = false;
+          }
+
+          fallback.remove();
+
+          status.textContent = copied
+            ? "Reflection copied to clipboard."
+            : "Copying is unavailable. Please select and copy your answers manually.";
+        }
+      });
+    }
 
     function resetQuiz() {
-
       quiz.reset();
 
       document.querySelectorAll(".question")
@@ -1135,10 +1027,9 @@
           card.classList.remove("missing");
         });
 
+      error.textContent = "";
       result.hidden = true;
       result.innerHTML = "";
-
-      errorMessage.textContent = "";
 
       updateProgress();
 
@@ -1149,13 +1040,12 @@
     }
 
     document.getElementById("results-button")
-      .addEventListener("click", calculateScore);
+      .addEventListener("click", calculateScores);
 
     document.getElementById("reset-button")
       .addEventListener("click", resetQuiz);
 
     updateProgress();
-
   </script>
 
 </body>
