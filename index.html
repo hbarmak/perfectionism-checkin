@@ -1236,6 +1236,96 @@ h1 {
 
         ${getPathway(adaptive, maladaptive)}
 
+
+<section class="reflection" id="decision-avoidance">
+  <h3>Decision-Making and Avoidance</h3>
+
+  <p>
+    Academic standards and concerns about performance
+    can sometimes influence how students approach
+    decisions, uncertainty, and challenging tasks.
+  </p>
+
+  <p>
+    Some students may experience decision avoidance,
+    procrastination, repeated analysis of options,
+    or difficulty moving forward when they are
+    uncertain about the outcome.
+  </p>
+
+  <p>
+    These experiences are not measured directly by
+    the AMPERE questionnaire. The following reflection
+    is optional and is not used to calculate your
+    Adaptive or Maladaptive Perfectionism scores.
+  </p>
+
+  <div class="activity">
+    <h3>Reflect on Your Decision-Making</h3>
+
+    <p>
+      Consider a recent academic decision, assignment,
+      or project that was difficult to move forward with.
+    </p>
+
+    <label for="avoidance-situation">
+      1. What decision or task have you been
+      putting off?
+    </label>
+    <textarea
+      id="avoidance-situation"
+      placeholder="Example: Choosing a project topic or submitting a draft."
+    ></textarea>
+
+    <label for="avoidance-barrier">
+      2. What makes moving forward difficult?
+    </label>
+    <textarea
+      id="avoidance-barrier"
+      placeholder="Example: Too many options, uncertainty, or concern about making a mistake."
+    ></textarea>
+
+    <label for="avoidance-pattern">
+      3. What happens when you feel uncertain?
+    </label>
+    <textarea
+      id="avoidance-pattern"
+      placeholder="Example: I keep researching, postpone the decision, or ask others to decide."
+    ></textarea>
+
+    <label for="avoidance-action">
+      4. What is one manageable step you could take?
+    </label>
+    <textarea
+      id="avoidance-action"
+      placeholder="Example: Set a decision deadline or choose one option to test."
+    ></textarea>
+
+    <button
+      type="button"
+      id="copy-avoidance"
+    >
+      Copy My Decision Reflection
+    </button>
+
+    <span
+      id="avoidance-copy-status"
+      class="status"
+      role="status"
+      aria-live="polite"
+    ></span>
+
+    <p class="note">
+      These prompts are educational reflections,
+      not a validated measure of decision avoidance,
+      procrastination, decision fatigue, or
+      analysis paralysis.
+    </p>
+  </div>
+</section>
+
+
+
         ${supportResources()}
 
         <p class="disclaimer">
@@ -1267,6 +1357,42 @@ h1 {
       if (document.getElementById("copy-reflection")) {
         attachReflectionCopy();
       }
+
+
+      
+const avoidanceButton =
+  document.getElementById("copy-avoidance");
+
+if (avoidanceButton) {
+  avoidanceButton.addEventListener("click", async () => {
+    const fields = [
+      ["Decision or Task", "avoidance-situation"],
+      ["Barriers", "avoidance-barrier"],
+      ["Response to Uncertainty", "avoidance-pattern"],
+      ["Next Step", "avoidance-action"]
+    ];
+
+    const content =
+      "AMPERE: Decision-Making Reflection\n\n" +
+      fields.map(([title, id]) => {
+        const answer =
+          document.getElementById(id).value.trim();
+
+        return `${title}\n${answer || "(Not answered)"}`;
+      }).join("\n\n");
+
+    const status =
+      document.getElementById("avoidance-copy-status");
+
+    try {
+      await navigator.clipboard.writeText(content);
+      status.textContent = "Reflection copied to clipboard.";
+    } catch (error) {
+      status.textContent =
+        "Automatic copying is unavailable. Please select and copy your answers manually.";
+    }
+  });
+}
 
       result.scrollIntoView({
         behavior: "smooth",
